@@ -3,7 +3,7 @@
 DirectXSetUp::DirectXSetUp(Window* Window)
 	:TheWindow{Window}
 {
-	
+	InitialiseD3D();
 }
 
 DirectXSetUp::~DirectXSetUp()
