@@ -30,6 +30,9 @@ private:
 	ID3D11InputLayout* m_InputLayout;
 	ID3D11Buffer* m_constantBuffer;
 
+	//this may not work as im trying something differnt to the tutroial(this normall was made within render?)
+	ID3D11ShaderResourceView* m_ModelTexture;
+	ID3D11SamplerState* m_ModelSampler;
 
 	float m_x, m_y, m_z;
 	float m_xAngle, m_yAngle, m_zAngle;
@@ -49,11 +52,13 @@ public:
 	Model(ID3D11Device* device, ID3D11DeviceContext* context);
 	~Model();
 
-	void Draw(DirectX::XMMATRIX* view, DirectX::XMMATRIX* projection, ID3D11SamplerState* sampler, ID3D11ShaderResourceView* texture);
+	HRESULT LoadObjModel(char* filename);
 
-	void SetXpos(float X);
-	void SetYpos(float X);
-	void Setzpos(float X);
+	void Draw(DirectX::XMMATRIX* view, DirectX::XMMATRIX* projection);
+
+	void SetXPos(float X);
+	void SetYPos(float X);
+	void SetZPos(float X);
 
 	void SetXAngle(float x);
 	void SetYAngle(float y);
@@ -61,9 +66,9 @@ public:
 
 	void SetScale(float scale);
 
-	float GetXpos();
-	float GetYpos();
-	float GetZpos();
+	float GetXPos();
+	float GetYPos();
+	float GetZPos();
 
 	float GetScale();
 
