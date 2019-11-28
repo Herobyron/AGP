@@ -18,7 +18,7 @@ private:
 
 	//change these names
 	ID3D11DepthStencilView* g_pZBuffer;
-	ID3D11RenderTargetView* g_pBackBufferRTView = NULL;
+	ID3D11RenderTargetView* g_pBackBufferRTView = nullptr;
 
 
 	Window* TheWindow;
@@ -32,8 +32,11 @@ public:
 	~DirectXSetUp();
 
 	HRESULT InitialiseD3D();
+	ID3D11Device* ReturnDevice();
+	ID3D11DeviceContext* ReturnImmediateContext();
 
-
+	ID3D11DepthStencilView* ReturnZBuffer();
+	ID3D11RenderTargetView* ReturnbufferRTView();
 
 };
 

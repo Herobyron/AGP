@@ -1,9 +1,13 @@
 #include <d3d11.h>
 #include "Renderer.h"
+#include "Window.h"
+#include "DirectXSetUp.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
 	Renderer* renderer = new Renderer(hinstance, nCmdShow);
+	
+
 
 	MSG msg = { 0 };
 
@@ -19,4 +23,10 @@ int WINAPI WinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _
 			
 		}
 	}
+
+
+
+
+
+
 }

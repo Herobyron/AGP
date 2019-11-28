@@ -110,6 +110,7 @@ HRESULT Model::LoadObjModel(char* filename)
 
 	m_D3DDevice->CreateSamplerState(&sampler_desc, &m_ModelSampler);
 
+
 	D3D11_BUFFER_DESC CBuffer;
 	ZeroMemory(&CBuffer, sizeof(CBuffer));
 	CBuffer.Usage = D3D11_USAGE_DEFAULT;

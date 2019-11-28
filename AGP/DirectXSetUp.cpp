@@ -124,3 +124,23 @@ HRESULT DirectXSetUp::InitialiseD3D()
 	return S_OK;
 
 }
+
+ID3D11Device* DirectXSetUp::ReturnDevice()
+{
+	return Device;
+}
+
+ID3D11DeviceContext* DirectXSetUp::ReturnImmediateContext()
+{
+	return ImmediateContext;
+}
+
+ID3D11DepthStencilView* DirectXSetUp::ReturnZBuffer()
+{
+	return g_pZBuffer;
+}
+
+ID3D11RenderTargetView* DirectXSetUp::ReturnbufferRTView()
+{
+	return g_pBackBufferRTView;
+}
