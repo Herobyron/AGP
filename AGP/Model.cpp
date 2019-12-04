@@ -11,6 +11,8 @@ Model::Model(ID3D11Device* device, ID3D11DeviceContext* context)
 	m_xAngle, m_yAngle, m_zAngle = 0;
 	m_Scale = 1.0f;
 
+	
+
 }
 
 Model::~Model()
@@ -197,6 +199,9 @@ void Model::CalculateBoundingSphereRadius()
 void Model::Draw(DirectX::XMMATRIX* view, DirectX::XMMATRIX* projection)
 {
 	DirectX::XMMATRIX world;
+
+
+
 
 	m_ImmediateContext->PSSetSamplers(0, 1, &m_ModelSampler);
 	m_ImmediateContext->PSGetShaderResources(0, 1, &m_ModelTexture);

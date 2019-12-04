@@ -18,7 +18,9 @@ Renderer::Renderer(HINSTANCE hInstance, int CommandShow)
 
 Renderer::~Renderer()
 {
-
+	if (TheWindow) delete TheWindow;
+	if (TestModel) delete TestModel;
+	if (DirectX)   delete DirectX;
 }
 
 Window* Renderer::ReturnWindow()
@@ -33,28 +35,48 @@ HRESULT Renderer::InitialseGraphics()
 
 	//loading in a Model (Testing)
 	TestModel = new Model(DirectX->ReturnDevice(), DirectX->ReturnImmediateContext());
-	TestModel->LoadObjModel((char*) "assets/PointySphere.obj");
+	TestModel->LoadObjModel((char*) "assets/Sphere.obj");
 
 	TestModel->SetScale(1);
-	TestModel->SetXAngle(90);
-	TestModel->SetXPos(0);
-	TestModel->SetYPos(0);
-	TestModel->SetZPos(0);
+	TestModel->SetXAngle(0);
+	//TestModel->SetXPos(0);
+	//TestModel->SetYPos(0);
+	//TestModel->SetZPos(0);
 
 
 	return S_OK;
 }
 
-void Renderer::RenderUpdate()
+void Renderer::RenderUpdate(Camera* camera)
 {
 	DirectX->ReturnImmediateContext()->ClearRenderTargetView(DirectX->ReturnbufferRTView(), m_ClearColour);
 	DirectX->ReturnImmediateContext()->ClearDepthStencilView(DirectX->ReturnZBuffer(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	//put the object file model stuff here
+
 
 	DirectX->ReturnImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0), 640.0 / 480, 1.0, 100);
 	
+	view = camera->GetViewMatrix();
 
-	//TestModel->Draw();
+	TestModel->SetXPos(camera->GetX());
+	TestModel->SetYPos(camera->GetY());
+	TestModel->SetZPos(camera->GetZ());
+
+	TestModel->Draw(&view, &projection);
+
+	DirectX->ReturnSwapChain()->Present(0, 0);
 }
 
+
+DirectXSetUp* Renderer::ReturnDirectX()
+{
+	return DirectX;
+}
+
+DirectX::XMMATRIX Renderer::ReturnProjection()
+{
+	return projection;
+}

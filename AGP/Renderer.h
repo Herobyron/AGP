@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Model.h"
 #include "DirectXSetUp.h"
-
+#include "Camera.h"
 
 class Renderer
 {
@@ -38,7 +38,6 @@ private:
 	DirectX::XMMATRIX view;
 
 
-
 public:
 
 	Renderer();
@@ -48,8 +47,11 @@ public:
 	Window* ReturnWindow();
 	
 	HRESULT InitialseGraphics();
-	
-	void RenderUpdate();
+	DirectXSetUp* ReturnDirectX();
+
+	DirectX::XMMATRIX ReturnProjection();
+
+	void RenderUpdate(Camera* camera);
 
 };
 

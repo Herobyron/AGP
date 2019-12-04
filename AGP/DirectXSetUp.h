@@ -38,5 +38,7 @@ public:
 	ID3D11DepthStencilView* ReturnZBuffer();
 	ID3D11RenderTargetView* ReturnbufferRTView();
 
+	IDXGISwapChain* ReturnSwapChain();
+
 };
 

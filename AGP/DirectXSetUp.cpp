@@ -3,7 +3,7 @@
 DirectXSetUp::DirectXSetUp(Window* Window)
 	:TheWindow{Window}
 {
-	InitialiseD3D();
+	//InitialiseD3D();
 }
 
 DirectXSetUp::~DirectXSetUp()
@@ -143,4 +143,9 @@ ID3D11DepthStencilView* DirectXSetUp::ReturnZBuffer()
 ID3D11RenderTargetView* DirectXSetUp::ReturnbufferRTView()
 {
 	return g_pBackBufferRTView;
+}
+
+IDXGISwapChain* DirectXSetUp::ReturnSwapChain()
+{
+	return SwapChain;
 }
