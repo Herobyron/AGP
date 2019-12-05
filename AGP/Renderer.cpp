@@ -37,11 +37,49 @@ HRESULT Renderer::InitialseGraphics()
 	TestModel = new Model(DirectX->ReturnDevice(), DirectX->ReturnImmediateContext());
 	TestModel->LoadObjModel((char*) "assets/Sphere.obj");
 
-	TestModel->SetScale(1);
+	TestModel->SetScale(0.1);
 	TestModel->SetXAngle(0);
-	//TestModel->SetXPos(0);
-	//TestModel->SetYPos(0);
-	//TestModel->SetZPos(0);
+	TestModel->SetXPos(0);
+	TestModel->SetYPos(0);
+	TestModel->SetZPos(0);
+
+
+
+
+	
+	ZeroMemory(&BufferDesc, sizeof(BufferDesc));
+	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	BufferDesc.ByteWidth = (36 * 36);
+	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	hr = DirectX->ReturnDevice()->CreateBuffer(&BufferDesc, NULL, &VertexBuffer);
+
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+
+	ZeroMemory(&ConstantBufferDesc, sizeof(ConstantBufferDesc));
+	ConstantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ConstantBufferDesc.ByteWidth = 112;
+	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	hr = DirectX->ReturnDevice()->CreateBuffer(&ConstantBufferDesc, NULL, &ConstantBuffer);
+
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	DirectX->ReturnImmediateContext()->Map(VertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &MS);
+
+	memcpy(MS.pData, TestModel->vertices, sizeof(36 * 36));
+
+	DirectX->ReturnImmediateContext()->Unmap(VertexBuffer, NULL);
+
+
 
 
 	return S_OK;

@@ -120,7 +120,7 @@ HRESULT DirectXSetUp::InitialiseD3D()
 
 	ImmediateContext->RSSetViewports(1, &viewport);
 
-	//change this later
+	
 	return S_OK;
 
 }

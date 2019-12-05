@@ -4,6 +4,7 @@
 #include "DirectXSetUp.h"
 #include "Camera.h"
 
+
 class Renderer
 {
 private:
@@ -15,14 +16,23 @@ private:
 	//vertext buffer desc (for set up)
 	D3D11_BUFFER_DESC BufferDesc;
 
-	//constant buffer
+	//constant buffer Desc
 	D3D11_BUFFER_DESC ConstantBufferDesc;
+
+	//constant buffer
+	ID3D11Buffer* ConstantBuffer;
+
 
 	//Vertex buffer
 	ID3D11Buffer* VertexBuffer;
 
 	//Sampler Desc
 	D3D11_SAMPLER_DESC SamplerDesc;
+
+
+
+	//A Mapped Subresource
+	D3D11_MAPPED_SUBRESOURCE MS;
 
 	//stuff i know is needed
 	//The BackBuffer
@@ -52,6 +62,7 @@ public:
 	DirectX::XMMATRIX ReturnProjection();
 
 	void RenderUpdate(Camera* camera);
+
 
 };
 
