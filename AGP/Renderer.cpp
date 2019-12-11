@@ -3,29 +3,47 @@
 
 Renderer::Renderer()
 {
+	ConstantBuffer = NULL;
+	VertexBuffer = NULL;
+	Sampler = NULL;
+	DeviceRef = NULL;
+	ImmediateContextRef = NULL;
+	SwapchainRef = NULL;
+	Vertexshader = NULL;
+	PixelShader = NULL;
 
 }
 
-Renderer::Renderer(HINSTANCE hInstance, int CommandShow)
+Renderer::Renderer(DirectXSetUp* DirectXRef)
 {
-	TheWindow = new Window(hInstance, CommandShow);
-	DirectX = new DirectXSetUp(ReturnWindow());
+	DeviceRef = DirectXRef->ReturnDevice();
+	ImmediateContextRef = DirectXRef->ReturnImmediateContext();
+	SwapchainRef = DirectXRef->ReturnSwapChain();
 
+	ConstantBuffer = NULL;
+	VertexBuffer = NULL;
+	Sampler = NULL;
+	Vertexshader = NULL;
+	PixelShader = NULL;
 
-
+	//intialise everything
+	InitialseGraphics();
 }
 
 
 Renderer::~Renderer()
 {
-	if (TheWindow) delete TheWindow;
 	if (TestModel) delete TestModel;
-	if (DirectX)   delete DirectX;
-}
 
-Window* Renderer::ReturnWindow()
-{
-	return TheWindow;
+	if (VertexBuffer) VertexBuffer->Release();
+	if (Vertexshader) Vertexshader->Release();
+	if (PixelShader) PixelShader->Release();
+	if (SwapchainRef) SwapchainRef->Release();
+	if (ConstantBuffer) ConstantBuffer->Release();
+	if (Sampler) Sampler->Release();
+	if (ImmediateContextRef) ImmediateContextRef->Release();
+	if (DeviceRef) DeviceRef->Release();
+	
 }
 
 // come back to this later as im not sure what actually needs to be in this
@@ -34,14 +52,14 @@ HRESULT Renderer::InitialseGraphics()
 	HRESULT hr = S_OK;
 
 	//loading in a Model (Testing)
-	TestModel = new Model(DirectX->ReturnDevice(), DirectX->ReturnImmediateContext());
-	TestModel->LoadObjModel((char*) "assets/Sphere.obj");
-
-	TestModel->SetScale(0.1);
-	TestModel->SetXAngle(0);
-	TestModel->SetXPos(0);
-	TestModel->SetYPos(0);
-	TestModel->SetZPos(0);
+	//TestModel = new Model(DirectX->ReturnDevice(), DirectX->ReturnImmediateContext());
+	//TestModel->LoadObjModel((char*) "assets/Sphere.obj");
+	//
+	//TestModel->SetScale(0.1);
+	//TestModel->SetXAngle(0);
+	//TestModel->SetXPos(0);
+	//TestModel->SetYPos(0);
+	//TestModel->SetZPos(0);
 
 
 
@@ -109,10 +127,6 @@ void Renderer::RenderUpdate(Camera* camera)
 }
 
 
-DirectXSetUp* Renderer::ReturnDirectX()
-{
-	return DirectX;
-}
 
 DirectX::XMMATRIX Renderer::ReturnProjection()
 {

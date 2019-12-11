@@ -12,17 +12,34 @@ class DirectXSetUp
 {
 private:
 
-	ID3D11Device* Device;
-	ID3D11DeviceContext* ImmediateContext;
-	IDXGISwapChain* SwapChain;
+	//A Rect which is used within IntialiseD3D()
+	RECT rc;
 
-	//change these names
-	ID3D11DepthStencilView* g_pZBuffer;
-	ID3D11RenderTargetView* g_pBackBufferRTView = nullptr;
+	//the HWND which is initialised in constructor. got from window
+	HWND Hwnd;
 
+	// the Device refernce. which is declared here and intialised within InitialiseD3D()
+	ID3D11Device* Device = nullptr;
+	
+	//immediate context refernce. which is declared here and intialised within InitialiseD3D()
+	ID3D11DeviceContext* ImmediateContext = nullptr;
 
-	Window* TheWindow;
+	// swap chain which is declared here and initialised within InitialiseD3D()
+	IDXGISwapChain* SwapChain = nullptr;
 
+	//the Z Buffer which is declared here and intialised within IntialiseD3D()
+	ID3D11DepthStencilView* ZBuffer = nullptr;
+
+	//the Z buffer Texture is declared here and initialsed within InitialiseD3D()
+	ID3D11Texture2D* ZBufferTexture = nullptr;
+
+	//The BackBuffer pointer. which is declared here and initialised within InitialiseD3D()
+	ID3D11RenderTargetView* BackBufferRTView = nullptr;
+	
+	//the backbuffer Texture. which is declared here and initialsied within InitialiseD3D()
+	ID3D11Texture2D* BackBufferTexture;
+
+	// the driver type and feature level both declared within directX class. within InitialiseD3D()
 	D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 

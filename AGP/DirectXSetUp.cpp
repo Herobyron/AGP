@@ -1,9 +1,16 @@
 #include "DirectXSetUp.h"
 
 DirectXSetUp::DirectXSetUp(Window* Window)
-	:TheWindow{Window}
 {
-	//InitialiseD3D();
+	Device = NULL;
+	ImmediateContext = NULL;
+	SwapChain = NULL;
+
+	ZBuffer = nullptr;
+	ZBufferTexture = nullptr;
+	BackBufferRTView = NULL;
+
+	Hwnd = Window->GetHWND();
 }
 
 DirectXSetUp::~DirectXSetUp()
@@ -15,9 +22,9 @@ HRESULT DirectXSetUp::InitialiseD3D()
 {
 	HRESULT hr = S_OK;
 
-	GetClientRect(TheWindow->GetHWND(), &TheWindow->GetRect());
-	UINT width = TheWindow->GetRect().right - TheWindow->GetRect().left;
-	UINT hieght = TheWindow->GetRect().bottom - TheWindow->GetRect().top;
+	GetClientRect(Hwnd, &rc);
+	UINT width  = rc.right  - rc.left;
+	UINT hieght = rc.bottom - rc.top;
 	
 	UINT createDeviceFlags = 0;
 
@@ -47,7 +54,7 @@ HRESULT DirectXSetUp::InitialiseD3D()
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = TheWindow->GetHWND();
+	sd.OutputWindow = Hwnd;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	sd.Windowed = true;
@@ -66,14 +73,14 @@ HRESULT DirectXSetUp::InitialiseD3D()
 		return hr;
 
 	//Get pointer to back buffer texture
-	ID3D11Texture2D* pBackBufferTexture;
-	hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& pBackBufferTexture);
+	BackBufferTexture;
+	hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& BackBufferTexture);
 
 	if (FAILED(hr)) return hr;
 
 	//use the back buffer texture pointer to create the render target view
-	hr = Device->CreateRenderTargetView(pBackBufferTexture, NULL, &g_pBackBufferRTView);
-	pBackBufferTexture->Release();
+	hr = Device->CreateRenderTargetView(BackBufferTexture, NULL, &BackBufferRTView);
+	BackBufferTexture->Release();
 
 	if (FAILED(hr)) return hr;
 
@@ -90,8 +97,8 @@ HRESULT DirectXSetUp::InitialiseD3D()
 	tex2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	tex2dDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	ID3D11Texture2D* pZBufferTexture;
-	hr = Device->CreateTexture2D(&tex2dDesc, NULL, &pZBufferTexture);
+	ZBufferTexture;
+	hr = Device->CreateTexture2D(&tex2dDesc, NULL, &ZBufferTexture);
 
 	if (FAILED(hr)) return hr;
 
@@ -102,11 +109,11 @@ HRESULT DirectXSetUp::InitialiseD3D()
 	dsvDesc.Format = tex2dDesc.Format;
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-	Device->CreateDepthStencilView(pZBufferTexture, &dsvDesc, &g_pZBuffer);
-	pZBufferTexture->Release();
+	Device->CreateDepthStencilView(ZBufferTexture, &dsvDesc, &ZBuffer);
+	ZBufferTexture->Release();
 
 	//set the render target view
-	ImmediateContext->OMSetRenderTargets(1, &g_pBackBufferRTView, g_pZBuffer);
+	ImmediateContext->OMSetRenderTargets(1, &BackBufferRTView, ZBuffer);
 
 	//set the viewport
 	D3D11_VIEWPORT viewport;
@@ -137,15 +144,16 @@ ID3D11DeviceContext* DirectXSetUp::ReturnImmediateContext()
 
 ID3D11DepthStencilView* DirectXSetUp::ReturnZBuffer()
 {
-	return g_pZBuffer;
+	return ZBuffer;
 }
 
 ID3D11RenderTargetView* DirectXSetUp::ReturnbufferRTView()
 {
-	return g_pBackBufferRTView;
+	return BackBufferRTView;
 }
 
 IDXGISwapChain* DirectXSetUp::ReturnSwapChain()
 {
 	return SwapChain;
 }
+
