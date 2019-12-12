@@ -11,8 +11,11 @@ int WINAPI WinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//creates direct set up and intialsies D3D
 	DirectXSetUp* SetUp = new DirectXSetUp(MainWindow);
 
+	//creates the Input and initialises inputs
+	Input* TheInputs = new Input(MainWindow->GetHInstance(), MainWindow->GetHWND());
+
 	//creates the Renderer and then Intialises Graphics
-	Renderer* renderer = new Renderer(hinstance, nCmdShow);
+	Renderer* renderer = new Renderer(SetUp, TheInputs);
 
 	//need to create input and other stuff as well before camera
 

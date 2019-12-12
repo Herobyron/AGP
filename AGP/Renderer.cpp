@@ -11,10 +11,10 @@ Renderer::Renderer()
 	SwapchainRef = NULL;
 	Vertexshader = NULL;
 	PixelShader = NULL;
-
+	Inputs = new Input();
 }
 
-Renderer::Renderer(DirectXSetUp* DirectXRef)
+Renderer::Renderer(DirectXSetUp* DirectXRef, Input* theinputs)
 {
 	DeviceRef = DirectXRef->ReturnDevice();
 	ImmediateContextRef = DirectXRef->ReturnImmediateContext();
@@ -26,6 +26,9 @@ Renderer::Renderer(DirectXSetUp* DirectXRef)
 	Vertexshader = NULL;
 	PixelShader = NULL;
 
+	//create the inputs
+	Inputs = theinputs;
+
 	//intialise everything
 	InitialseGraphics();
 }
@@ -33,7 +36,8 @@ Renderer::Renderer(DirectXSetUp* DirectXRef)
 
 Renderer::~Renderer()
 {
-	if (TestModel) delete TestModel;
+	if (TestModel)  delete TestModel;
+	if (Inputs)		delete Inputs;
 
 	if (VertexBuffer) VertexBuffer->Release();
 	if (Vertexshader) Vertexshader->Release();

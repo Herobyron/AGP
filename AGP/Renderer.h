@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "DirectXSetUp.h"
 #include "Camera.h"
-
+#include "Input.h"
 
 class Renderer
 {
@@ -30,7 +30,10 @@ private:
 	ID3D11SamplerState* Sampler;
 
 	//need to create the input class
-	//input latyout declare here
+	ID3D11InputLayout* InputLayout;
+
+	// a refernce to the input class that is made within main
+	Input* Inputs;
 
 	//The Device Which is created within DirectXSetup and passed through the Renderer Constructor when made
 	ID3D11Device* DeviceRef;
@@ -66,7 +69,7 @@ public:
 
 	// a Second Contstructor which Takes a refernce to the DirectX class
 	// this is used to get a refernce to the Device, ImmediateContext, and swapchain
-	Renderer(DirectXSetUp* DirectXRef);
+	Renderer(DirectXSetUp* DirectXRef, Input* theinputs);
 
 	// the deconstrucotr to make sure that all the pointers are destroyed within order
 	~Renderer();
