@@ -30,6 +30,8 @@ Model::~Model()
 
 }
 
+//
+// need to change thi to use the vs_4_0 instead of the version 5 one 
 HRESULT Model::LoadObjModel(char* filename)
 {
 	m_Object = new ObjFileModel(filename, m_D3DDevice, m_ImmediateContext);

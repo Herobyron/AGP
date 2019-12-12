@@ -2,7 +2,10 @@
 
 Input::Input()
 {
-
+	DirectInput = NULL;
+	KeyBoardDevice = NULL;
+	Instance = NULL;
+	Hwnd = NULL;
 }
 
 Input::Input(HINSTANCE INSTANCE, HWND hwnd)

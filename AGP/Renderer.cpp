@@ -67,15 +67,14 @@ HRESULT Renderer::InitialseGraphics()
 
 
 
-
-	
+	//set up the vertex buffer ready
 	ZeroMemory(&BufferDesc, sizeof(BufferDesc));
 	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	BufferDesc.ByteWidth = (36 * 36);
 	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-	hr = DirectX->ReturnDevice()->CreateBuffer(&BufferDesc, NULL, &VertexBuffer);
+	hr = DeviceRef->CreateBuffer(&BufferDesc, NULL, &VertexBuffer);
 
 	if (FAILED(hr))
 	{

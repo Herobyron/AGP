@@ -79,6 +79,8 @@
     <FxCompile Include="ModelShader.hlsl">
       <Filter>Source Files</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders.hlsl" />
+    <FxCompile Include="Shaders.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
