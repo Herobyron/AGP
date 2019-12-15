@@ -11,6 +11,9 @@ DirectXSetUp::DirectXSetUp(Window* Window)
 	BackBufferRTView = NULL;
 
 	Hwnd = Window->GetHWND();
+	
+	//intialise everything
+	InitialiseD3D();
 }
 
 DirectXSetUp::~DirectXSetUp()

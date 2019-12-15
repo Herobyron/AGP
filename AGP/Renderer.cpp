@@ -11,7 +11,10 @@ Renderer::Renderer()
 	SwapchainRef = NULL;
 	Vertexshader = NULL;
 	PixelShader = NULL;
+	BackBufferRTViewRef = NULL;
+	ZBufferRef = NULL;
 	Inputs = new Input();
+	TestShape = new Shape();
 }
 
 Renderer::Renderer(DirectXSetUp* DirectXRef, Input* theinputs)
@@ -19,12 +22,17 @@ Renderer::Renderer(DirectXSetUp* DirectXRef, Input* theinputs)
 	DeviceRef = DirectXRef->ReturnDevice();
 	ImmediateContextRef = DirectXRef->ReturnImmediateContext();
 	SwapchainRef = DirectXRef->ReturnSwapChain();
+	BackBufferRTViewRef = DirectXRef->ReturnbufferRTView();
+	ZBufferRef = DirectXRef->ReturnZBuffer();
 
-	ConstantBuffer = NULL;
-	VertexBuffer = NULL;
-	Sampler = NULL;
-	Vertexshader = NULL;
-	PixelShader = NULL;
+	//ConstantBuffer = NULL;
+	//VertexBuffer = NULL;
+	//Sampler = NULL;
+	//Vertexshader = NULL;
+	//PixelShader = NULL;
+
+	//create the test shape
+	TestShape = new Shape();
 
 	//create the inputs
 	Inputs = theinputs;
@@ -38,6 +46,7 @@ Renderer::~Renderer()
 {
 	if (TestModel)  delete TestModel;
 	if (Inputs)		delete Inputs;
+	if (TestShape)  delete TestShape;
 
 	if (VertexBuffer) VertexBuffer->Release();
 	if (Vertexshader) Vertexshader->Release();
@@ -67,66 +76,140 @@ HRESULT Renderer::InitialseGraphics()
 
 
 
-	//set up the vertex buffer ready
+	//set up and create the vertex buffer
 	ZeroMemory(&BufferDesc, sizeof(BufferDesc));
 	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	BufferDesc.ByteWidth = (36 * 36);
 	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
+	//creating the buffuer
 	hr = DeviceRef->CreateBuffer(&BufferDesc, NULL, &VertexBuffer);
 
+	//check to see if it has failed
 	if (FAILED(hr))
 	{
 		return hr;
 	}
 
-
+	//setting up and creating the constant buffer
 	ZeroMemory(&ConstantBufferDesc, sizeof(ConstantBufferDesc));
 	ConstantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	ConstantBufferDesc.ByteWidth = 112;
 	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	hr = DirectX->ReturnDevice()->CreateBuffer(&ConstantBufferDesc, NULL, &ConstantBuffer);
+	hr = DeviceRef->CreateBuffer(&ConstantBufferDesc, NULL, &ConstantBuffer);
 
 	if (FAILED(hr))
 	{
 		return hr;
 	}
 
-	DirectX->ReturnImmediateContext()->Map(VertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &MS);
+	ImmediateContextRef->Map(VertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &MS);
 
-	memcpy(MS.pData, TestModel->vertices, sizeof(36 * 36));
+	memcpy(MS.pData, TestShape->vertices, sizeof(36 * 36));
 
-	DirectX->ReturnImmediateContext()->Unmap(VertexBuffer, NULL);
+	ImmediateContextRef->Unmap(VertexBuffer, NULL);
 
+	//load and compile the vertex and pixel shaders
+	ID3DBlob* VS, * PS, * Error;
 
+	//Note Error is bieng thrown from the shader wonder what it is
+	hr = D3DX11CompileFromFile("Shaders.hlsl", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, &Error, 0);
 
+	//checks to see if shader was compiled correctly
+	if (Error != 0)
+	{
+		OutputDebugStringA((char*)Error->GetBufferPointer());
+		Error->Release();
+		if (FAILED(hr))
+		{
+			return hr;
+		}
+	}
+
+	hr = D3DX11CompileFromFile("Shaders.hlsl", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &PS, &Error, 0);
+
+	//checks to see if the shader was compiled without errors
+	if (Error != 0)
+	{
+		OutputDebugStringA((char*)Error->GetBufferPointer());
+		Error->Release();
+		if (FAILED(hr))
+		{
+			return hr;
+		}
+	}
+
+	//create the shader object (Vertex shader)
+	hr = DeviceRef->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &Vertexshader);
+	
+	//if setup failed exit
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	//create the shader object (pixel shader)
+	hr = DeviceRef->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &PixelShader);
+
+	//if setup failed exit
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	//set the shader objects as active
+	ImmediateContextRef->VSSetShader(Vertexshader, 0, 0);
+	ImmediateContextRef->PSSetShader(PixelShader, 0, 0);
+
+	//create and set the input layout object
+	D3D11_INPUT_ELEMENT_DESC iedesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	//creating the input layout
+	hr = DeviceRef->CreateInputLayout(iedesc, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &InputLayout);
+
+	// check to see if it has failed
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	//setup the layout
+	ImmediateContextRef->IASetInputLayout(InputLayout);
 
 	return S_OK;
 }
 
 void Renderer::RenderUpdate(Camera* camera)
 {
-	DirectX->ReturnImmediateContext()->ClearRenderTargetView(DirectX->ReturnbufferRTView(), m_ClearColour);
-	DirectX->ReturnImmediateContext()->ClearDepthStencilView(DirectX->ReturnZBuffer(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	ImmediateContextRef->ClearRenderTargetView(BackBufferRTViewRef, m_ClearColour);
+	ImmediateContextRef->ClearDepthStencilView(ZBufferRef, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	//put the object file model stuff here
+	UINT stride = TestShape->SizeOfPOSStruct();
+	UINT offset = 0;
+	ImmediateContextRef->IASetVertexBuffers(0, 1, &VertexBuffer, &stride, &offset);
 
+	//select which primative type to use
+	ImmediateContextRef->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	DirectX->ReturnImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ImmediateContextRef->Draw(3, 0);
 
-	projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0), 640.0 / 480, 1.0, 100);
-	
-	view = camera->GetViewMatrix();
+	//projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0), 640.0 / 480, 1.0, 100);
+	//
+	//view = camera->GetViewMatrix();
+	//
+	//TestModel->SetXPos(camera->GetX());
+	//TestModel->SetYPos(camera->GetY());
+	//TestModel->SetZPos(camera->GetZ());
+	//
+	//TestModel->Draw(&view, &projection);
 
-	TestModel->SetXPos(camera->GetX());
-	TestModel->SetYPos(camera->GetY());
-	TestModel->SetZPos(camera->GetZ());
-
-	TestModel->Draw(&view, &projection);
-
-	DirectX->ReturnSwapChain()->Present(0, 0);
+	SwapchainRef->Present(0, 0);
 }
 
 

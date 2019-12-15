@@ -61,3 +61,20 @@ POS_COL_TEX_NORM_VERTEX vertices[] =
 
 
 };
+
+//the basic constructor
+Shape::Shape()
+{
+
+}
+
+//basic Destructor
+Shape::~Shape()
+{
+
+}
+
+int Shape::SizeOfPOSStruct()
+{
+	return sizeof(POS_COL_TEX_NORM_VERTEX);
+}

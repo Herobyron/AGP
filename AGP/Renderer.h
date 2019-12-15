@@ -3,6 +3,7 @@
 #include "DirectXSetUp.h"
 #include "Camera.h"
 #include "Input.h"
+#include "Shape.h"
 
 class Renderer
 {
@@ -10,6 +11,9 @@ private:
 
 	// a test model for when i want to test wether things will render
 	Model* TestModel;
+
+	//a test shape for when i was setting up the renderer class
+	Shape* TestShape;
 
 	//vertext buffer desc (for set up)
 	D3D11_BUFFER_DESC BufferDesc;
@@ -29,7 +33,7 @@ private:
 	//The Sampler declared here and intitialsed within Intilaisegrpahics
 	ID3D11SamplerState* Sampler;
 
-	//need to create the input class
+	// the intialisation of the input layout
 	ID3D11InputLayout* InputLayout;
 
 	// a refernce to the input class that is made within main
@@ -52,6 +56,12 @@ private:
 
 	//the Pixel Shader. which is intialised within Intialise Graphics
 	ID3D11PixelShader* PixelShader;
+
+	//a refernce to the back buffer RT view that was created in the DirectXSetup class
+	ID3D11RenderTargetView* BackBufferRTViewRef;
+	
+	//a refernce to the Z buffer that was created in the DirectxSetUp class
+	ID3D11DepthStencilView* ZBufferRef;
 
 
 	// the colour needed to clear the screen

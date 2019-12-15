@@ -19,14 +19,13 @@ int WINAPI WinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	//need to create input and other stuff as well before camera
 
-
+	//creating the world camera
 	Camera* WorldCamera = new Camera(0.0f, 0.0f, -1, 0.0f);
 
 
 
-
-	//renderer->ReturnDirectX()->InitialiseD3D();
-	renderer->InitialseGraphics();
+	//SetUp->InitialiseD3D();
+	//renderer->InitialseGraphics();
 
 	MSG msg = { 0 };
 
