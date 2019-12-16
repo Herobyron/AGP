@@ -71,3 +71,9 @@ HRESULT Window::InitialiseWindow(HINSTANCE hinstance, int CmdShow)
 	return S_OK;
 
 }
+
+
+HWND Window::ReturnHWND()
+{
+	return Hwnd;
+}

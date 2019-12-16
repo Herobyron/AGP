@@ -23,7 +23,7 @@ public:
 
 	HRESULT InitialiseWindow(HINSTANCE hinstance, int CmdShow);
 
-	//LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+	HWND ReturnHWND();
 
 };
 
