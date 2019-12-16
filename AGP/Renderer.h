@@ -5,9 +5,21 @@
 #include "Input.h"
 #include "Shape.h"
 
+struct CONSTANT_BUFFER
+{
+	DirectX::XMMATRIX WorldViewProjection; //64 bytes
+	DirectX::XMVECTOR directional_light_vector; // 16 bytes
+	DirectX::XMVECTOR directional_light_colour; // 16  bytes
+	DirectX::XMVECTOR ambient_light_colour; // 16 bytes
+};
+
+
 class Renderer
 {
 private:
+
+	//Constant Buffer Values
+	CONSTANT_BUFFER CB0Values;
 
 	// a test model for when i want to test wether things will render
 	Model* TestModel;
@@ -62,6 +74,9 @@ private:
 	
 	//a refernce to the Z buffer that was created in the DirectxSetUp class
 	ID3D11DepthStencilView* ZBufferRef;
+
+	//texture
+	ID3D11ShaderResourceView* Texture;
 
 
 	// the colour needed to clear the screen

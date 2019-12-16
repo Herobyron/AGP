@@ -3,7 +3,7 @@ cbuffer CB0
 	matrix WVPMatrix; // 64 bytes
 	float4 directional_light_vector; //16 bytes
 	float4 directional_light_colour; //16 bytes
-	float4 ambient_light_colour
+	float4 ambient_light_colour;
 
 };
 
@@ -12,12 +12,13 @@ struct VOut
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
 	float2 texcoord : TEXCOORD;
+	float3 normal : NORMAL;
 };
 
 Texture2D texture0;
 SamplerState sampler0;
 
-Vout VShader(float4 position : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
+VOut VShader(float4 position : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD, float3 normal : NORMAL)
 {
 	VOut output;
 

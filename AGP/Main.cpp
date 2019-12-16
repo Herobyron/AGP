@@ -20,7 +20,7 @@ int WINAPI WinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//need to create input and other stuff as well before camera
 
 	//creating the world camera
-	Camera* WorldCamera = new Camera(0.0f, 0.0f, -1, 0.0f);
+	Camera* WorldCamera = new Camera(0.0f, 0.0f, -10, 0.0f);
 
 
 
@@ -36,10 +36,9 @@ int WINAPI WinMain(_In_ HINSTANCE hinstance, _In_opt_ HINSTANCE hPrevInstance, _
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		else
-		{
+
 			renderer->RenderUpdate(WorldCamera);
-		}
+		
 
 
 
