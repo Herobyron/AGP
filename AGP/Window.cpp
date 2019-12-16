@@ -1,11 +1,11 @@
 #include "Window.h"
 
-//callback 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+//callback
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-Window::Window(HINSTANCE hInstance, int CommandShow)
+Window::Window()
 {
-	InitialiseWindow(hInstance, CommandShow);
+
 }
 
 Window::~Window()
@@ -13,83 +13,61 @@ Window::~Window()
 
 }
 
-
-HRESULT Window::InitialiseWindow(HINSTANCE hInstance, int CommandShow)
-{
-	
-		// the name of the window
-		char Name[100] = "Crashing VisualStudio Again (ROBO)";
-
-		//register class
-		WNDCLASSEX wcex = { 0 };
-		wcex.cbSize = sizeof(WNDCLASSEX);
-		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc = WndProc;
-		wcex.hInstance = hInstance;
-		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-		//   wcex.hbrBackground = (HBRUSH )( COLOR_WINDOW + 1); // Needed for non-D3D apps
-		wcex.lpszClassName = Name;
-
-		if (!RegisterClassEx(&wcex)) return E_FAIL;
-
-		// Create window
-		HInst = hInstance;
-		RECT rc = { 0, 0, 640, 480 };
-		AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-		HWnd = CreateWindow(Name, Name, WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left,
-			rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
-		if (!HWnd)
-			return E_FAIL;
-
-		ShowWindow(HWnd, CommandShow);
-
-		return S_OK;
-
-	
-}
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	HDC hdc;
 
 	switch (message)
 	{
-		case WM_PAINT:
+	case WM_PAINT:
 		{
-			hdc = BeginPaint(hWnd, &ps);
-			EndPaint(hWnd, &ps);
+			hdc = BeginPaint(hwnd, &ps);
+			EndPaint(hwnd, &ps);
 			break;
 		}
-		case WM_SIZE:
-		{
-
-			break;
-		}
-		case WM_DESTROY:
+	case WM_DESTROY:
 		{
 			PostQuitMessage(0);
 			break;
 		}
-		default:
-			break;
+
+
+	default:
+		return DefWindowProc(hwnd, message, wParam, lParam);
+		break;
 	}
-	return DefWindowProc(hWnd, message, wParam, lParam);;
+
 }
 
 
-RECT Window::GetRect()
+HRESULT Window::InitialiseWindow(HINSTANCE hinstance, int CmdShow)
 {
-	return rc;
-}
+	//a name for the app
+	char Name[100] = "PLEASE WORK";
 
-HWND Window::GetHWND()
-{
-	return HWnd;
-}
+	//register class
+	WNDCLASSEX wcex = { 0 };
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WndProc;
+	wcex.hInstance = hinstance;
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.lpszClassName = Name;
 
-HINSTANCE Window::GetHInstance()
-{
-	return HInst;
+	if (!RegisterClassEx(&wcex)) return E_FAIL;
+
+	//create window
+	HInstance = hinstance;
+	RECT rc = { 0,0,640,480 };
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+	Hwnd = CreateWindow(Name, TutorialName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hinstance, NULL);
+
+	if (!Hwnd)
+		return E_FAIL;
+
+	ShowWindow(Hwnd, CmdShow);
+
+	return S_OK;
+
 }

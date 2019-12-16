@@ -1,25 +1,29 @@
 #pragma once
 #include <d3d11.h>
+#include <dxgi.h>
+#include <d3dx11.h>
+#include <windows.h>
+#include <dxerr.h>
+
 
 class Window
 {
 private:
 
-	HINSTANCE HInst;
-	HWND HWnd;
-	RECT rc;
+	HINSTANCE HInstance = NULL;
+	HWND Hwnd = NULL;
 
+	char TutorialName[100] = "PLS WORK";
 
 public:
 
-	Window(HINSTANCE hInstance, int CommandShow);
+	Window();
 	~Window();
 
-	HRESULT InitialiseWindow(HINSTANCE hInstance, int CommandShow);
 
-	RECT GetRect();
-	HWND GetHWND();
-	HINSTANCE GetHInstance();
+	HRESULT InitialiseWindow(HINSTANCE hinstance, int CmdShow);
+
+	//LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 };
 
