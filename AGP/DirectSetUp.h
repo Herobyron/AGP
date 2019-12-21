@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "text2D.h"
 
 class DirectSetUp
 {
@@ -24,6 +25,11 @@ private:
 	//the swapchain
 	IDXGISwapChain* SwapChain = NULL;
 
+	//the Z buffer
+	ID3D11DepthStencilView* ZBuffer;
+
+	// a 2d text pointer
+	Text2D * The2DText;
 
 public:
 
@@ -38,6 +44,9 @@ public:
 
 	ID3D11RenderTargetView* ReturnBackBufferView();
 
+	ID3D11DepthStencilView* ReturnZBuffer();
+
+	Text2D* ReturnText();
 
 };
 

@@ -9,6 +9,8 @@ DirectSetUp::~DirectSetUp()
 	if (Device) Device->Release();
 	if (ImmediateContext) ImmediateContext->Release();
 	if (SwapChain) SwapChain->Release();
+	if (ZBuffer) ZBuffer->Release();
+	if (The2DText) delete The2DText;
 }
 
 
@@ -82,8 +84,39 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 
 	 if (FAILED(hr)) return hr;
 
+	 //creating the z buffer texture
+	 D3D11_TEXTURE2D_DESC tex2dDesc;
+	 ZeroMemory(&tex2dDesc, sizeof(tex2dDesc));
+
+	 tex2dDesc.Width = width;
+	 tex2dDesc.Height = hieght;
+	 tex2dDesc.ArraySize = 1;
+	 tex2dDesc.MipLevels = 1;
+	 tex2dDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	 tex2dDesc.SampleDesc.Count = sd.SampleDesc.Count;
+	 tex2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	 tex2dDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	 ID3D11Texture2D* ZBufferTexture;
+	 hr = Device->CreateTexture2D(&tex2dDesc, NULL, &ZBufferTexture);
+
+	 if (FAILED(hr))
+	 {
+		 return hr;
+	 }
+
+	 //create the z buffer
+	 D3D11_DEPTH_STENCIL_VIEW_DESC DSVDesc;
+	 ZeroMemory(&DSVDesc, sizeof(DSVDesc));
+
+	 DSVDesc.Format = tex2dDesc.Format;
+	 DSVDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+	 Device->CreateDepthStencilView(ZBufferTexture, &DSVDesc, &ZBuffer);
+	 ZBufferTexture->Release();
+
 	 //set the redner target view
-	 ImmediateContext->OMSetRenderTargets(1, &BackBufferRtView, NULL);
+	 ImmediateContext->OMSetRenderTargets(1, &BackBufferRtView, ZBuffer);
 
 	 //set the viewport
 	 D3D11_VIEWPORT viewport;
@@ -97,6 +130,8 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 
 	 ImmediateContext->RSSetViewports(1, &viewport);
 
+	 //text stuff
+	 The2DText = new Text2D("assets/font1.bmp", Device, ImmediateContext);
 
 	 return S_OK;
 
@@ -121,4 +156,14 @@ IDXGISwapChain* DirectSetUp::ReturnSwapChain()
 ID3D11RenderTargetView* DirectSetUp::ReturnBackBufferView()
 {
 	return BackBufferRtView;
+}
+
+ID3D11DepthStencilView* DirectSetUp::ReturnZBuffer()
+{
+	return ZBuffer;
+}
+
+Text2D* DirectSetUp::ReturnText()
+{
+	return The2DText;
 }
