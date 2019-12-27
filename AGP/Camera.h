@@ -33,5 +33,12 @@ public:
 	// a function to retern the view matrix of the camera
 	DirectX::XMMATRIX GetViewMatrix();
 
+	//functions to get the cameras X, Y and Z positions
+	float GetX();
+	float GetY();
+	float GetZ();
+
+	//
+
 };
 

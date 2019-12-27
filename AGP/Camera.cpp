@@ -55,3 +55,19 @@ DirectX::XMMATRIX Camera::GetViewMatrix()
 
 	return view;
 }
+
+
+float Camera::GetX()
+{
+	return M_X;
+}
+
+float Camera::GetY()
+{
+	return M_Y;
+}
+
+float Camera::GetZ()
+{
+	return M_Z;
+}

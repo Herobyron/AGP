@@ -5,7 +5,7 @@ Render::Render()
 {
 	//creating the camera
 	TheCamera = new Camera(0.0f, 0.0f, -0.5f, 0.0f);
-
+	
 }
 
 
@@ -26,7 +26,7 @@ Render::~Render()
 //the render frame
 void Render::RenderFrame(DirectSetUp* SetUp)
 {
-	
+
 	//clear the back buffer 
 	float rgba_clear_color[4] = { 0.3f, 0.3f, 0.7f, 1.0f };
 	SetUp->ReturnImmediateContext()->ClearRenderTargetView(SetUp->ReturnBackBufferView(), rgba_clear_color);
@@ -91,6 +91,22 @@ void Render::RenderFrame(DirectSetUp* SetUp)
 	//SetUp->ReturnText()->AddText("Its broken again", -1, 1, 0.1);
 	//SetUp->ReturnText()->RenderText();
 
+	//drawing the model and setting its position
+	TestModel->SetX(0);
+	TestModel->SetY(0);
+	TestModel->SetZ(5);
+	TestModel->SetYAngle(0);
+	TestModel->SetScale(0.01);
+
+	TestModel->Draw(view, projection);
+
+
+	TheSkyBox->SetBoxX(0);
+	TheSkyBox->SetBoxY(0);
+	TheSkyBox->SetBoxZ(5);
+	TheSkyBox->SetBoxScale(10);
+
+	TheSkyBox->Draw(view, projection);
 	//draw the vertex buffer to the back buffer
 	SetUp->ReturnImmediateContext()->Draw(36, 0);
 
@@ -102,6 +118,13 @@ void Render::RenderFrame(DirectSetUp* SetUp)
 HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 {
 	HRESULT hr = S_OK;
+	// setting up the test model
+	TestModel = new Model(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	TestModel->LoadObjModel((char*)"assets/ROBO.obj");
+
+	TheSkyBox = new SkyBox(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	TheSkyBox->SkyBoxInitialisation();
+	//TheSkyBox->Draw();
 
 	//define verticies of a triangle - screen coordinates -1 to +1
 	POS_COL_VERTEX verticies[] =
@@ -193,7 +216,7 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 
 
 
-	//copy the bertices into the buffer
+	//copy the vertices into the buffer
 	D3D11_MAPPED_SUBRESOURCE ms;
 
 	//lock the buffer to allow for writing
@@ -278,4 +301,9 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 
 	return S_OK;
 
+}
+
+Camera* Render::ReturnCamera()
+{
+	return TheCamera;
 }

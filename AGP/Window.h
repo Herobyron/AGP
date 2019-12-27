@@ -24,6 +24,6 @@ public:
 	HRESULT InitialiseWindow(HINSTANCE hinstance, int CmdShow);
 
 	HWND ReturnHWND();
-
+	HINSTANCE ReturnHinstance();
 };
 

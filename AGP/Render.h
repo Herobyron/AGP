@@ -2,9 +2,11 @@
 #include "DirectSetUp.h"
 #define _XM_NO_INTINSICS_
 #define XM_NO_ALIGNMENT
-#include <directxmath.h>
+//#include <directxmath.h>
 // this will be moved to main and i will change initialise graphics to take a camera pointer so it can be changed position later on
 #include "Camera.h" 
+#include "Model.h"
+#include "SkyBox.h"
 
 
 //define the vertex structure
@@ -47,6 +49,11 @@ private:
 	DirectX::XMVECTOR Directional_Light_Colour;
 	DirectX::XMVECTOR Ambient_Light_Colour;
 
+	// A Test Model
+	Model* TestModel;
+	// the skybox
+	SkyBox* TheSkyBox;
+
 public:
 
 	Render();
@@ -55,7 +62,7 @@ public:
 
 	HRESULT IntialiseGraphics(DirectSetUp* SetUp);
 	void RenderFrame(DirectSetUp* SetUp);
-
+	Camera* ReturnCamera();
 
 };
 

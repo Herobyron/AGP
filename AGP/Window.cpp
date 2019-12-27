@@ -77,3 +77,8 @@ HWND Window::ReturnHWND()
 {
 	return Hwnd;
 }
+
+HINSTANCE Window::ReturnHinstance()
+{
+	return HInstance;
+}
