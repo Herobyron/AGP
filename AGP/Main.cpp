@@ -3,6 +3,7 @@
 #include "Render.h"
 #include "Input.h"
 
+
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -12,6 +13,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	DirectSetUp* TheSetUp = new DirectSetUp();
 	Render* TheRender = new Render();
 	Input* TheInput = new Input(TheWindow->ReturnHinstance(), TheWindow->ReturnHWND());
+
 
 	if (FAILED(TheWindow->InitialiseWindow(hInstance, nCmdShow)))
 	{
@@ -76,8 +78,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			TheRender->ReturnCamera()->Rotate(1.0f * 0.1);
 		}
 
-
-		TheRender->RenderFrame(TheSetUp);
+	
+		TheRender->RenderFrame(TheSetUp, TheInput);
+		
 	}
 
 	return(int)msg.wParam;

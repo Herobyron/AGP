@@ -40,13 +40,7 @@ private:
 	// the models scale
 	float ModelScale;
 
-	// a function to orientate a model to be facing a certain position
-	//parameters, the x and z positions in world space
-	void LookAt_XZ(float WorldSpaceX, float WorldSpaceZ);
 
-	// a function to move the model foward 
-	//parameter is the distance at which you want the model to move foward by
-	void MoveFoward(float distance);
 
 	//bounding sphere information used for collision
 	float BoundingSphereCentreX;
@@ -68,6 +62,15 @@ public:
 
 	//model destructor
 	~Model();
+
+	// a function to orientate a model to be facing a certain position
+	//parameters, the x and z positions in world space
+	void LookAt_XZ(float WorldSpaceX, float WorldSpaceZ);
+
+	// a function to move the model foward 
+	//parameter is the distance at which you want the model to move foward by
+	void MoveFoward(float distance);
+
 
 	//a function that loads the object into the game
 	HRESULT LoadObjModel(char* FileName);
@@ -122,6 +125,8 @@ public:
 	float GetBoundingSphereRadius();
 	DirectX::XMVECTOR GetBoundingSphereWorldSpacePosition();
 	bool CheckCollision(Model* OtherModel);
+	bool CheckCollisionAABB(Model* OtherModel);
+
 
 };
 

@@ -15,7 +15,7 @@ SkyBox::SkyBox(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 	SkyBoxObject->SetXAngle(0);
 	SkyBoxObject->SetYAngle(0);
 	SkyBoxObject->SetZAngle(0);
-	SkyBoxObject->SetScale(3.0f);
+	SkyBoxObject->SetScale(1.0f);
 }
 
 SkyBox::~SkyBox()
@@ -267,6 +267,10 @@ void SkyBox::Draw(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	SkyBoxImmediateContext->RSSetState(RasterSkyBox);
 	SkyBoxImmediateContext->OMSetDepthStencilState(DepthWriteSkyBox, 0);
 
+	SkyBoxImmediateContext->PSSetSamplers(0, 1, &SkyBoxSampler);
+	SkyBoxImmediateContext->PSSetShaderResources(0, 1, &SkyBoxTexture);
+
+
 	SkyBoxObject->Draw(view, projection);
 	//SkyBoxImmediateContext->Draw(36, 0);
 	SkyBoxImmediateContext->RSSetState(RasterSolid);
@@ -344,3 +348,5 @@ float SkyBox::ReturnScale()
 {
 	return SkyBoxScale;
 }
+
+

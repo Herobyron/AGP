@@ -108,6 +108,7 @@ HRESULT Model::LoadObjModel(char* FileName)
 		return hr;
 	}
 
+
 	// calculating the model centre points and radius
 	CalculateModelCentrePoint();
 	CalculateBoundingSphereRadius();
@@ -270,6 +271,8 @@ void Model::MoveFoward(float distance)
 
 }
 
+
+
 void Model::CalculateModelCentrePoint()
 {
 	float MinX = {0};
@@ -286,33 +289,52 @@ void Model::CalculateModelCentrePoint()
 		if (ModelObject->vertices[i].Pos.x >= MaxX)
 		{
 			MaxX = ModelObject->vertices[i].Pos.x;
+			MaxX *= ModelScale;
 		}
-		else if (ModelObject->vertices[i].Pos.x <= MinX)
+
+		if (ModelObject->vertices[i].Pos.x <= MinX)
 		{
 			MinX = ModelObject->vertices[i].Pos.x;
+			MinX *= ModelScale;
 		}
+
 		//test for the min and max of the y position
 		if (ModelObject->vertices[i].Pos.y >= MaxY)
 		{
 			MaxY = ModelObject->vertices[i].Pos.y;
+			MaxY *= ModelScale;
 		}
-		else if (ModelObject->vertices[i].Pos.y <= MinY)
+
+		if (ModelObject->vertices[i].Pos.y <= MinY)
 		{
 			MinY = ModelObject->vertices[i].Pos.y;
+			MinY *= ModelScale;
 		}
+
 		//tests for the min and max of the z position
 		if (ModelObject->vertices[i].Pos.z >= MaxZ)
 		{
 			MaxZ = ModelObject->vertices[i].Pos.z;
-		}
-		else if (ModelObject->vertices[i].Pos.z <= MinZ)
-		{
-			MinZ = ModelObject->vertices[i].Pos.z;
+			MaxZ *= ModelScale;
 		}
 
-		BoundingSphereCentreX = MaxX - MinX;
-		BoundingSphereCentreY = MaxY - MinY;
-		BoundingSphereCentreZ = MaxZ - MinZ;
+		if (ModelObject->vertices[i].Pos.z <= MinZ)
+		{
+			MinZ = ModelObject->vertices[i].Pos.z;
+			MinZ *= ModelScale;
+		}
+
+		BoundingSphereCentreX = ((MaxX - MinX) / 2);
+		BoundingSphereCentreY = ((MaxY - MinY) / 2);
+		BoundingSphereCentreZ = ((MaxZ - MinZ) / 2);
+
+		float ChangeDistX = (BoundingSphereCentreX * ModelScale);
+		float ChangeDistY = (BoundingSphereCentreY * ModelScale);
+		float ChangeDistZ = (BoundingSphereCentreZ * ModelScale);
+
+		BoundingSphereCentreX -= ChangeDistX;
+		BoundingSphereCentreY -= ChangeDistY;
+		BoundingSphereCentreZ -= ChangeDistZ;
 
 	}
 }
@@ -321,20 +343,41 @@ void Model::CalculateModelCentrePoint()
 void Model::CalculateBoundingSphereRadius()
 {
 	float HighestDistanceFromCentre = 0;
-	float SquaredCurentdistanceFromCentre;
+	float SquaredCurentdistanceFromCentreX;
+	float SquaredCurrentDistanceFromCentreY;
+	float SquredCurrentDistanceFromCentreZ;
+
+
 
 	for (int i = 0; i < ModelObject->numverts; i++)
 	{
-		SquaredCurentdistanceFromCentre = pow(BoundingSphereCentreX, 2) + pow(ModelObject->vertices[i].Pos.x, 2);
+		SquaredCurentdistanceFromCentreX =  pow(ModelObject->vertices[i].Pos.x, 2) + pow(BoundingSphereCentreX, 2);
+		//new way for radius of sphere
+		//SquaredCurentdistanceFromCentre = pow(ModelObject->vertices[i].Pos.x - BoundingSphereCentreX, 2) + pow(ModelObject->vertices[i].Pos.y - BoundingSphereCentreY, 2) + pow(ModelObject->vertices[i].Pos.z - BoundingSphereCentreZ, 2);
+		
+		// more new
+		SquaredCurrentDistanceFromCentreY = pow(ModelObject->vertices[i].Pos.y, 2) + pow(BoundingSphereCentreY, 2);
 
-		if (SquaredCurentdistanceFromCentre > HighestDistanceFromCentre)
+		SquredCurrentDistanceFromCentreZ = pow(ModelObject->vertices[i].Pos.z, 2) + pow(BoundingSphereCentreZ, 2);
+
+		if (SquaredCurentdistanceFromCentreX > HighestDistanceFromCentre)
 		{
-			HighestDistanceFromCentre = SquaredCurentdistanceFromCentre;
+			HighestDistanceFromCentre = SquaredCurentdistanceFromCentreX;
+		}
+		
+		if (SquaredCurrentDistanceFromCentreY > HighestDistanceFromCentre)
+		{
+			HighestDistanceFromCentre = SquaredCurrentDistanceFromCentreY;
+		}
+
+		if (SquredCurrentDistanceFromCentreZ > HighestDistanceFromCentre)
+		{
+			HighestDistanceFromCentre = SquredCurrentDistanceFromCentreZ;
 		}
 
 	}
 
-	BoungingSphereRadius = HighestDistanceFromCentre;
+	BoungingSphereRadius = HighestDistanceFromCentre ;
 }
 
 DirectX::XMVECTOR Model::GetBoundingSphereWorldSpacePosition()
@@ -350,7 +393,7 @@ DirectX::XMVECTOR Model::GetBoundingSphereWorldSpacePosition()
 
 	offset = DirectX::XMVectorSet(BoundingSphereCentreX, BoundingSphereCentreY, BoundingSphereCentreZ, 0.0);
 
-	offset = DirectX::XMVector3Transform(offset, world);
+	offset = DirectX::XMVector3Transform( offset, world);
 
 	return offset;
 }
@@ -381,10 +424,102 @@ bool Model::CheckCollision(Model* OtherModel)
 	float DistanceBetween = pow(ThisModelX - OtherModelX, 2) + pow(ThisModelY - OtherModelY, 2) + pow(ThisModelZ - OtherModelZ, 2);
 	float SumOfRadius = this->GetBoundingSphereRadius() + OtherModel->GetBoundingSphereRadius();
 
-	if (DistanceBetween < SumOfRadius)
+	if ((DistanceBetween) < (SumOfRadius))
 	{
 		return true;
 	}
 	else
 		return false;
+}
+
+bool Model::CheckCollisionAABB(Model* OtherModel)
+{
+	float ThisMinX = { 0 };
+	float ThisMaxX = { 0 };
+	float ThisMinY = { 0 };
+	float ThisMaxY = { 0 };
+	float ThisMinZ = { 0 };
+	float ThisMaxZ = { 0 };
+
+	float OtherMaxX = { 0 };
+	float OtherMinX = { 0 };
+	float OtherMaxY = { 0 };
+	float OtherMinY = { 0 };
+	float OtherMaxZ = { 0 };
+	float OtherMinZ = { 0 };
+
+	for (int i = 0; i < ModelObject->numverts; i++)
+	{
+		// test for min and max X
+		if (ModelObject->vertices[i].Pos.x > ThisMaxX)
+		{
+			ThisMaxX = ModelObject->vertices[i].Pos.x;
+		}
+		else if (ModelObject->vertices[i].Pos.x < ThisMinX)
+		{
+			ThisMinX = ModelObject->vertices[i].Pos.x;
+		}
+		//test for the min and max of the y position
+		if (ModelObject->vertices[i].Pos.y > ThisMaxY)
+		{
+			ThisMaxY = ModelObject->vertices[i].Pos.y;
+		}
+		else if (ModelObject->vertices[i].Pos.y < ThisMinY)
+		{
+			ThisMinY = ModelObject->vertices[i].Pos.y;
+		}
+		//tests for the min and max of the z position
+		if (ModelObject->vertices[i].Pos.z > ThisMaxZ)
+		{
+			ThisMaxZ = ModelObject->vertices[i].Pos.z;
+		}
+		else if (ModelObject->vertices[i].Pos.z < ThisMinZ)
+		{
+			ThisMinZ = ModelObject->vertices[i].Pos.z;
+		}
+	}
+		// for the other model
+		for (int i = 0; i < OtherModel->ModelObject->numverts; i++)
+		{
+			// test for min and max X
+			if (OtherModel->ModelObject->vertices[i].Pos.x > OtherMaxX)
+			{
+				OtherMaxX = OtherModel->ModelObject->vertices[i].Pos.x;
+			}
+			else if (OtherModel->ModelObject->vertices[i].Pos.x < OtherMinX)
+			{
+				OtherMinX = OtherModel->ModelObject->vertices[i].Pos.x;
+			}
+			//test for the min and max of the y position
+			if (OtherModel->ModelObject->vertices[i].Pos.y > OtherMaxY)
+			{
+				OtherMaxY = OtherModel->ModelObject->vertices[i].Pos.y;
+			}
+			else if (OtherModel->ModelObject->vertices[i].Pos.y < OtherMinY)
+			{
+				OtherMinY = OtherModel->ModelObject->vertices[i].Pos.y;
+			}
+			//tests for the min and max of the z position
+			if (OtherModel->ModelObject->vertices[i].Pos.z > OtherMaxZ)
+			{
+				OtherMaxZ = OtherModel->ModelObject->vertices[i].Pos.z;
+			}
+			else if (OtherModel->ModelObject->vertices[i].Pos.z < OtherMinZ)
+			{
+				OtherMinZ = OtherModel->ModelObject->vertices[i].Pos.z;
+			}
+		}
+
+
+		// testing the actual collision
+		if (ThisMaxX >= OtherMinX && ThisMinX <= OtherMaxX && ThisMinY <= OtherMaxY && ThisMaxY >= OtherMinY && ThisMinZ <= OtherMaxZ && ThisMaxZ >= OtherMinZ)
+		{
+			// they are colliding 
+			return true;
+		}
+
+		return false;
+
+
+	
 }

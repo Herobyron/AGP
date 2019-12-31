@@ -7,6 +7,10 @@
 #include "Camera.h" 
 #include "Model.h"
 #include "SkyBox.h"
+#include "World.h"
+#include "NPC.h"
+#include "Input.h"
+#include "Player.h"
 
 
 //define the vertex structure
@@ -51,8 +55,19 @@ private:
 
 	// A Test Model
 	Model* TestModel;
+	
 	// the skybox
 	SkyBox* TheSkyBox;
+
+	//the world
+	World* TheWorld;
+
+	// the first NPC
+	NPC* NPCOne;
+
+	// the player
+	Player* PlayerOne;
+
 
 public:
 
@@ -61,8 +76,11 @@ public:
 
 
 	HRESULT IntialiseGraphics(DirectSetUp* SetUp);
-	void RenderFrame(DirectSetUp* SetUp);
+	
+	void RenderFrame(DirectSetUp* SetUp, Input* theinput);
+	
 	Camera* ReturnCamera();
 
+	Player* ReturnPlayer();
 };
 

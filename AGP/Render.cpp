@@ -6,6 +6,11 @@ Render::Render()
 	//creating the camera
 	TheCamera = new Camera(0.0f, 0.0f, -0.5f, 0.0f);
 	
+	//creating the world
+	TheWorld = new World();
+
+
+
 }
 
 
@@ -24,7 +29,7 @@ Render::~Render()
 
 
 //the render frame
-void Render::RenderFrame(DirectSetUp* SetUp)
+void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 {
 
 	//clear the back buffer 
@@ -91,22 +96,50 @@ void Render::RenderFrame(DirectSetUp* SetUp)
 	//SetUp->ReturnText()->AddText("Its broken again", -1, 1, 0.1);
 	//SetUp->ReturnText()->RenderText();
 
-	//drawing the model and setting its position
-	TestModel->SetX(0);
-	TestModel->SetY(0);
-	TestModel->SetZ(5);
-	TestModel->SetYAngle(0);
-	TestModel->SetScale(0.01);
+	//drawing the world
+	TheWorld->DrawFloor(view, projection);
+	TheWorld->DrawCoin(view, projection);
 
+	//drawing the model and setting its position
 	TestModel->Draw(view, projection);
 
 
-	TheSkyBox->SetBoxX(0);
-	TheSkyBox->SetBoxY(0);
-	TheSkyBox->SetBoxZ(5);
-	TheSkyBox->SetBoxScale(10);
 
+	// skybox stuff
 	TheSkyBox->Draw(view, projection);
+
+	//stuff for the npc and its movement
+	//this should test to see if npc one is colliding with anything its it isnt then it should move downwards
+	if (theinput->ISKeyPressed(DIK_UP))
+	{
+		if (!TheWorld->TestFloorCollision(NPCOne->ReturnModel()))
+		{
+			NPCOne->MoveDown(1 * 0.01);
+		}
+	}
+	else if (theinput->ISKeyPressed(DIK_DOWN))
+	{
+		if (!TheWorld->TestFloorCollision(NPCOne->ReturnModel()))
+		{
+			NPCOne->MoveDown(-1 * 0.01);
+		}
+	}
+	else if (theinput->ISKeyPressed(DIK_LEFT))
+	{
+		if (!TestModel->CheckCollision(NPCOne->ReturnModel()))
+		{
+			NPCOne->ReturnModel()->MoveFoward(1.0 * 0.01);
+		}
+	}
+	
+
+	SetUp->ReturnImmediateContext()->PSSetSamplers(0, 1, &Sampler0);
+	SetUp->ReturnImmediateContext()->PSSetShaderResources(0, 1, &Texture0);
+
+	NPCOne->ReturnModel()->Draw(view, projection);
+
+	PlayerOne->ReturnModel()->Draw(view, projection);
+
 	//draw the vertex buffer to the back buffer
 	SetUp->ReturnImmediateContext()->Draw(36, 0);
 
@@ -120,11 +153,35 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 	HRESULT hr = S_OK;
 	// setting up the test model
 	TestModel = new Model(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
-	TestModel->LoadObjModel((char*)"assets/ROBO.obj");
+	TestModel->SetX(3);
+	TestModel->SetY(3);
+	TestModel->SetZ(0);
+	TestModel->SetYAngle(0);
+	TestModel->SetScale(1);
+	TestModel->LoadObjModel((char*)"assets/Sphere.obj");
 
 	TheSkyBox = new SkyBox(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	TheSkyBox->SetBoxX(0);
+	TheSkyBox->SetBoxY(0);
+	TheSkyBox->SetBoxZ(5);
+	TheSkyBox->SetBoxScale(20);
 	TheSkyBox->SkyBoxInitialisation();
-	//TheSkyBox->Draw();
+	
+	//setting up the world and creating it
+	TheWorld->InitialiseFloor(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+
+	//setting up the coins and creating it
+	TheWorld->InitialiseCoins(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+
+	//creating the npc
+	NPCOne = new NPC(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/Sphere.obj");
+
+	//creating the player
+	PlayerOne = new Player(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/ROBO.obj");
+	PlayerOne->ReturnModel()->SetScale(0.01f);
+	PlayerOne->ReturnModel()->SetY(0);
+	PlayerOne->ReturnModel()->SetZ(0);
+
 
 	//define verticies of a triangle - screen coordinates -1 to +1
 	POS_COL_VERTEX verticies[] =
@@ -306,4 +363,9 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 Camera* Render::ReturnCamera()
 {
 	return TheCamera;
+}
+
+Player* Render::ReturnPlayer()
+{
+	return PlayerOne;
 }

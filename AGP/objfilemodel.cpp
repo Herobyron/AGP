@@ -45,7 +45,7 @@ int ObjFileModel::loadfile(char* fname)
 {
 	FILE* pFile;
 
-	pFile = fopen(fname , "r"); // if changed to bin format will read carriage return \r (0d) as well as \n (0a) into fbuffer, may need to add \r checks(but seemed to work with basic test)
+	pFile = fopen(fname , "r"); // if changed to bin format will read carriage return \r (0d) a well as \n (0a) into fbuffer, may need to add \r checks(but seemed to work with basic test)
 	if (pFile==NULL) { DXTRACE_MSG("Failed to open model file");DXTRACE_MSG(fname); return 0 ;}
 
 	// get file size
