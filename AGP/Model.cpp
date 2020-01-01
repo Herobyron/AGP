@@ -271,7 +271,10 @@ void Model::MoveFoward(float distance)
 
 }
 
-
+void Model::MoveSideWays(float distance)
+{
+	ModelX +=  distance;
+}
 
 void Model::CalculateModelCentrePoint()
 {

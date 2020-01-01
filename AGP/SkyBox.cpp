@@ -125,7 +125,7 @@ HRESULT SkyBox::SkyBoxInitialisation()
 	DSDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	hr = SkyBoxDevice->CreateDepthStencilState(&DSDesc, &DepthWriteSkyBox);
 
-	D3DX11CreateShaderResourceViewFromFile(SkyBoxDevice, "assets/skybox02.dds", NULL, NULL, &SkyBoxTexture, NULL);
+	D3DX11CreateShaderResourceViewFromFile(SkyBoxDevice, "assets/robotexture.bmp", NULL, NULL, &SkyBoxTexture, NULL);
 
 	//loading in the vertex and pixel shaders of the model
 	ID3DBlob* VS1, * PS1, * Error1;

@@ -5,7 +5,7 @@ class Player : public Entity
 private:
 
 	// the score for the player when collecting coins
-	float Score;
+	int Score;
 
 
 
@@ -20,8 +20,10 @@ public:
 	// the destructor that uses the parent destructor
 	~Player();
 
-	float GetScore();
+	int GetScore();
 
-	void SetScore(float score);
+	void ADDScore(int score);
+
+	void MoveDown(float distance);
 };
 

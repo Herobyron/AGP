@@ -4,7 +4,7 @@
 Render::Render()
 {
 	//creating the camera
-	TheCamera = new Camera(0.0f, 0.0f, -0.5f, 0.0f);
+	TheCamera = new Camera(0.0f, 0.0f, -11.0f, 0.0f);
 	
 	//creating the world
 	TheWorld = new World();
@@ -93,45 +93,211 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 
 	//text seems to remove every other object except itself
 	//text (this is in the top corner of the window (for now))
-	//SetUp->ReturnText()->AddText("Its broken again", -1, 1, 0.1);
-	//SetUp->ReturnText()->RenderText();
+	
 
 	//drawing the world
 	TheWorld->DrawFloor(view, projection);
 	TheWorld->DrawCoin(view, projection);
+	TheWorld->DrawWalls(view, projection);
 
 	//drawing the model and setting its position
-	TestModel->Draw(view, projection);
+	//TestModel->Draw(view, projection);
 
-
+	Node1->Draw(view, projection);
+	Node2->Draw(view, projection);
+	Node3->Draw(view, projection);
+	Node4->Draw(view, projection);
 
 	// skybox stuff
 	TheSkyBox->Draw(view, projection);
 
 	//stuff for the npc and its movement
 	//this should test to see if npc one is colliding with anything its it isnt then it should move downwards
+	
+	if (theinput->ISKeyPressed(DIK_SPACE))
+	{
+		
+		if (!TheWorld->TestFloorCollision(PlayerOne->ReturnModel()))
+		{
+			PlayerOne->MoveDown(1 * 0.01);
+			TopColliding = false;
+		}
+		else
+		{
+			TopColliding = true;
+		}
+	}
+	else
+	{
+		if (!TheWorld->TestFloorCollision(PlayerOne->ReturnModel()))
+		{
+			PlayerOne->MoveDown(-1 * 0.01);
+			BottomColliding = false;
+		}
+		else
+		{
+			BottomColliding = true;
+		}
+	}
+
 	if (theinput->ISKeyPressed(DIK_UP))
 	{
-		if (!TheWorld->TestFloorCollision(NPCOne->ReturnModel()))
+		PlayerOne->ReturnModel()->MoveFoward(1.0 * 0.01);
+		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
-			NPCOne->MoveDown(1 * 0.01);
+			// add score
+			PlayerOne->ADDScore(100);
+		}
+		if (TheWorld->TestWallCollision(PlayerOne->ReturnModel()))
+		{
+			PlayerOne->ReturnModel()->ChangeZPos(-1);
 		}
 	}
 	else if (theinput->ISKeyPressed(DIK_DOWN))
 	{
-		if (!TheWorld->TestFloorCollision(NPCOne->ReturnModel()))
+		PlayerOne->ReturnModel()->MoveFoward(-1.0 * 0.01);
+		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
-			NPCOne->MoveDown(-1 * 0.01);
+			// add score
+			PlayerOne->ADDScore(100);
+		}
+		if (TheWorld->TestWallCollision(PlayerOne->ReturnModel()))
+		{
+			PlayerOne->ReturnModel()->ChangeZPos(1);
 		}
 	}
 	else if (theinput->ISKeyPressed(DIK_LEFT))
 	{
-		if (!TestModel->CheckCollision(NPCOne->ReturnModel()))
+		PlayerOne->ReturnModel()->MoveSideWays(-1.0 * 0.01);
+		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
-			NPCOne->ReturnModel()->MoveFoward(1.0 * 0.01);
+			// add score
+			PlayerOne->ADDScore(100);
+		}
+		if (TheWorld->TestWallCollision(PlayerOne->ReturnModel()))
+		{
+			PlayerOne->ReturnModel()->ChangeXPos(1);
+		}
+	}
+	else if (theinput->ISKeyPressed(DIK_RIGHT))
+	{
+		PlayerOne->ReturnModel()->MoveSideWays(1.0 * 0.01);
+		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
+		{
+			// add score
+			PlayerOne->ADDScore(100);
+		}
+		if (TheWorld->TestWallCollision(PlayerOne->ReturnModel()))
+		{
+			PlayerOne->ReturnModel()->ChangeXPos(-1);
 		}
 	}
 	
+
+
+	//checking if the player is colliding with floor and pushing the model up to make sure they dont fall through and can move
+	if (BottomColliding)
+	{
+		PlayerOne->MoveDown(1 * 0.1);
+		BottomColliding = false;
+	}
+	else if (TopColliding)
+	{
+		PlayerOne->MoveDown(-1 * 0.1);
+		TopColliding = false;
+	}
+
+	// npc movement stuff
+
+	// simulate gravity
+	//if (!TheWorld->TestFloorCollision(NPCOne->ReturnModel()))
+	//{
+	//	NPCOne->MoveDown(-1 * 0.01);
+	//	BottomCollidingNPC = false;
+	//}
+	//else
+	//{
+	//	BottomCollidingNPC = true;
+	//}
+	//
+	//if (BottomCollidingNPC)
+	//{
+	//	NPCOne->MoveDown(1 * 0.1);
+	//	BottomCollidingNPC = false;
+	//}
+	
+
+	// the other movement (movement for npc based off of nodes)
+	switch (currentnode)
+	{
+		case(N1):
+		{
+			if (!Rotated)
+			{
+				NPCOne->ReturnModel()->SetYAngle(270);
+				NPCOne->ReturnModel()->SetZ(-10);
+				Rotated = true;
+			}
+			break;
+		}
+		case(N2):
+		{
+			if (!Rotated)
+			{
+				NPCOne->ReturnModel()->SetYAngle(180);
+				NPCOne->ReturnModel()->SetX(10);
+				Rotated = true;
+			}
+			break;
+		}
+		case(N3):
+		{
+			if (!Rotated)
+			{
+				NPCOne->ReturnModel()->SetYAngle(90);
+				NPCOne->ReturnModel()->SetZ(10);
+				Rotated = true;
+			}
+			break;
+		}
+		case(N4):
+		{
+			if (!Rotated)
+			{
+				NPCOne->ReturnModel()->SetYAngle(0);
+				NPCOne->ReturnModel()->SetX(Node3->ReturnXPos());
+				Rotated = true;
+			}
+			break;
+		}
+		default:
+			break;
+	}
+
+	// npc actually moving
+	NPCOne->ReturnModel()->MoveFoward(1 * 0.01);
+
+	// test the collisions
+	if (NPCOne->ReturnModel()->CheckCollision(Node1))
+	{
+		currentnode = N2;
+		Rotated = false;
+	}
+	else if (NPCOne->ReturnModel()->CheckCollision(Node2))
+	{
+		currentnode = N3;
+		Rotated = false;
+	}
+	else if (NPCOne->ReturnModel()->CheckCollision(Node3))
+	{
+		currentnode = N4;
+		Rotated = false;
+	}
+	else if (NPCOne->ReturnModel()->CheckCollision(Node4))
+	{
+		currentnode = N1;
+		Rotated = false;
+	}
 
 	SetUp->ReturnImmediateContext()->PSSetSamplers(0, 1, &Sampler0);
 	SetUp->ReturnImmediateContext()->PSSetShaderResources(0, 1, &Texture0);
@@ -139,6 +305,10 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	NPCOne->ReturnModel()->Draw(view, projection);
 
 	PlayerOne->ReturnModel()->Draw(view, projection);
+
+
+	SetUp->ReturnText()->AddText( "score : " + to_string(PlayerOne->GetScore()), -1, 1, 0.1);
+	SetUp->ReturnText()->RenderText();
 
 	//draw the vertex buffer to the back buffer
 	SetUp->ReturnImmediateContext()->Draw(36, 0);
@@ -160,6 +330,40 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 	TestModel->SetScale(1);
 	TestModel->LoadObjModel((char*)"assets/Sphere.obj");
 
+	//setting up the nodes
+	Node1 = new Model(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	Node1->SetX(10);
+	Node1->SetY(1);
+	Node1->SetZ(10);
+	Node1->SetScale(1);
+	Node1->LoadObjModel((char*)"assets/cube.obj");
+
+
+	Node2 = new Model(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	Node2->SetX(-10);
+	Node2->SetY(1);
+	Node2->SetZ(10);
+	Node2->SetScale(1);
+	Node2->LoadObjModel((char*)"assets/cube.obj");
+
+	Node3 = new Model(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	Node3->SetX(-10);
+	Node3->SetY(1);
+	Node3->SetZ(-10);
+	Node3->SetScale(1);
+	Node3->LoadObjModel((char*)"assets/cube.obj");
+
+
+	Node4 = new Model(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	Node4->SetX(10);
+	Node4->SetY(1);
+	Node4->SetZ(-10);
+	Node4->SetScale(1);
+	Node4->LoadObjModel((char*)"assets/cube.obj");
+
+
+
+	//setting up the skybox
 	TheSkyBox = new SkyBox(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
 	TheSkyBox->SetBoxX(0);
 	TheSkyBox->SetBoxY(0);
@@ -173,12 +377,15 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 	//setting up the coins and creating it
 	TheWorld->InitialiseCoins(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
 
+	//setting up the walls
+	TheWorld->InitialiseWalls(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+
 	//creating the npc
-	NPCOne = new NPC(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/Sphere.obj");
+	NPCOne = new NPC(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/cube.obj");
 
 	//creating the player
-	PlayerOne = new Player(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/ROBO.obj");
-	PlayerOne->ReturnModel()->SetScale(0.01f);
+	PlayerOne = new Player(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/Sphere.obj");
+	PlayerOne->ReturnModel()->SetScale(0.5f);
 	PlayerOne->ReturnModel()->SetY(0);
 	PlayerOne->ReturnModel()->SetZ(0);
 

@@ -71,6 +71,9 @@ public:
 	//parameter is the distance at which you want the model to move foward by
 	void MoveFoward(float distance);
 
+	// a function to move the model to the left and to the right
+	// takes a parameter for the distance the model should move
+	void MoveSideWays(float distance);
 
 	//a function that loads the object into the game
 	HRESULT LoadObjModel(char* FileName);

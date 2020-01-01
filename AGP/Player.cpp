@@ -16,12 +16,17 @@ Player::~Player()
 	Entity::~Entity();
 }
 
-float Player::GetScore()
+int Player::GetScore()
 {
 	return Score;
 }
 
-void Player::SetScore(float score)
+void Player::ADDScore(int score)
 {
-	Score = score;
+	Score += score;
+}
+
+void Player::MoveDown(float distance)
+{
+	TheEntityModel->ChangeYPos(distance);
 }

@@ -32,6 +32,9 @@ struct CONSTANT_BUFFER0
 	DirectX::XMVECTOR ambient_light_colour; // 16 bytes
 }; // total size is now 112
 
+//a enum to determine npcs move
+enum Node { N1, N2, N3, N4 };
+
 class Render
 {
 private:
@@ -68,6 +71,24 @@ private:
 	// the player
 	Player* PlayerOne;
 
+	//nodes for the NPC to move around
+	Model* Node1;
+	Model* Node2;
+	Model* Node3;
+	Model* Node4;
+
+
+	// some bools for collisions
+	bool TopColliding		= false;
+	bool BottomColliding	= false;
+	bool LeftColliding		= false;
+	bool RightColliding		= false;
+	bool BottomCollidingNPC	= false;
+	bool TopCollidingNPC	= false;
+
+	bool Rotated = false;
+
+	Node currentnode = N1;
 
 public:
 

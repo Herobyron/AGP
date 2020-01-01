@@ -29,6 +29,21 @@ World::World()
 	LayoutCoin.push_back("....C....C....");
 	LayoutCoin.push_back("C...C....C...C");
 
+	LayoutWalls.push_back("WWWWWWWWWWWWWWWW");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("W..............W");
+	LayoutWalls.push_back("WWWWWWWWWWWWWWWW");
 
 	FloorScale = 1.0f;
 }
@@ -59,6 +74,16 @@ float World::GetCoinHieght()
 float World::GetCoinWidth()
 {
 	return LayoutCoin[0].length();
+}
+
+float World::GetWallHieght()
+{
+	return LayoutWalls.size();
+}
+
+float World::GetWallWidth()
+{
+	return LayoutWalls[0].length();
 }
 
 
@@ -95,6 +120,46 @@ void World::InitialiseFloor(ID3D11Device* device, ID3D11DeviceContext* immediate
 				{
 					break;
 				}
+			}
+		}
+	}
+}
+
+
+void World::InitialiseWalls(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
+{
+	for (int h = 0; h < GetWallHieght(); h++)
+	{
+		for (int r = 0; r < GetWallWidth(); r++)
+		{
+			float xpos = r;
+			float zpos = h;
+
+			switch (LayoutWalls[h][r])
+			{
+			case('W'):
+			{
+				// this will just be a standard block 
+				Model* WallBlock = new Model(device, immediatecontext);
+
+
+
+				//FloorBlock->SetScale(FloorScale);
+				WallBlock->SetX((r * 2) - 14);
+				WallBlock->SetY(0);
+				WallBlock->SetZ((h * 2) - 12);
+
+				WallBlock->SetScale(1.0f);
+
+				WallBlock->LoadObjModel((char*)"assets/cube.obj");
+
+				WorldWalls.push_back(WallBlock);
+				break;
+			}
+			case('.'):
+			{
+				break;
+			}
 			}
 		}
 	}
@@ -156,6 +221,14 @@ void World::DrawCoin(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	}
 }
 
+void World::DrawWalls(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
+{
+	for (int i = 0; i < WorldWalls.size(); i++)
+	{
+		WorldWalls[i]->Draw(view, projection);
+	}
+}
+
 bool World::TestFloorCollision(Model* OtherModel)
 {
 	// testing for collision with all blocks stored in the world vector
@@ -180,6 +253,8 @@ bool World::TestCoinCollision(Model* OtherModel)
 	{
 		if (Coins[i]->CheckCollision(OtherModel))
 		{
+			// set the coin to move
+			Coins[i]->SetY(1000);
 			return true;
 		}
 	}
@@ -188,4 +263,19 @@ bool World::TestCoinCollision(Model* OtherModel)
 
 
 
+}
+
+bool World::TestWallCollision(Model* OtherModel)
+{
+	// testing for collision with all blocks stored in the world vector
+	for (int i = 0; i < WorldWalls.size(); i++)
+	{
+		if (WorldWalls[i]->CheckCollision(OtherModel))
+		{
+			
+			return true;
+		}
+	}
+
+	return false;
 }

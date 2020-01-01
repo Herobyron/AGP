@@ -18,6 +18,12 @@ private:
 	// a vector that stores the placements of all of the coins in the world 
 	std::vector<std::string> LayoutCoin;
 
+	// a vector that stores the placements of all the walls in the world
+	std::vector<std::string> LayoutWalls;
+
+	// a vector that stores all of the wall blocks
+	std::vector<Model*> WorldWalls;
+
 	//floats to determine the floor scale
 	float FloorScale;
 
@@ -32,11 +38,17 @@ public:
 	// a function to initialise the coins and put all of them into the correct vector ready to be drawn
 	void InitialiseCoins(ID3D11Device* device, ID3D11DeviceContext* immediatecontext);
 
+	// a function to initialise the walls and put all of them into the correct vector ready for drawing
+	void InitialiseWalls(ID3D11Device* device, ID3D11DeviceContext* immediatecontext);
+
 	// a function to go through the floor vector to draw 
 	void DrawFloor(DirectX::XMMATRIX view, DirectX::XMMATRIX projection);
 
 	//a function to go through the coin vector and draw 
 	void DrawCoin(DirectX::XMMATRIX view, DirectX::XMMATRIX projection);
+
+	// a function to go through the wall vector and draw
+	void DrawWalls(DirectX::XMMATRIX view, DirectX::XMMATRIX projection);
 
 	float GetFloorHieght();
 	float GetFloorWidth();
@@ -44,7 +56,11 @@ public:
 	float GetCoinHieght();
 	float GetCoinWidth();
 
+	float GetWallHieght();
+	float GetWallWidth();
+
 	bool TestFloorCollision(Model* OtherModel);
 	bool TestCoinCollision(Model* OtherModel);
+	bool TestWallCollision(Model* OtherModel);
 };
 
