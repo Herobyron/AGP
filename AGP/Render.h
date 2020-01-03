@@ -11,7 +11,7 @@
 #include "NPC.h"
 #include "Input.h"
 #include "Player.h"
-
+#include "ParticleGenerator.h"
 
 //define the vertex structure
 struct POS_COL_VERTEX
@@ -79,6 +79,11 @@ private:
 	Model* Node2;
 	Model* Node3;
 	Model* Node4;
+
+	// the particle generator
+	ParticleGenerator* TheGenerator;
+	// a float for the camera position
+	DirectX::XMFLOAT3 CameraPos;
 
 
 	// some bools for collisions

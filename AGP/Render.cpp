@@ -9,7 +9,7 @@ Render::Render()
 	//creating the world
 	TheWorld = new World();
 
-
+	
 
 }
 
@@ -110,6 +110,10 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 
 	// skybox stuff
 	TheSkyBox->Draw(view, projection);
+
+	//drawing the particle generator
+	CameraPos = { TheCamera->GetX(), TheCamera->GetX(), TheCamera->GetX() };
+	TheGenerator->DrawParticle(&view, &projection, &CameraPos);
 
 	//stuff for the npc and its movement
 	//this should test to see if npc one is colliding with anything its it isnt then it should move downwards
@@ -375,7 +379,9 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 	Node4->SetScale(1);
 	Node4->LoadObjModel((char*)"assets/cube.obj");
 
-
+	//setting up particle generator
+	TheGenerator = new ParticleGenerator(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
+	TheGenerator->CreateParticle();
 
 	//setting up the skybox
 	TheSkyBox = new SkyBox(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext());
