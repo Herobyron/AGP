@@ -98,7 +98,7 @@ HRESULT Model::LoadObjModel(char* FileName)
 	ZeroMemory(&constant_buffer_desc, sizeof(constant_buffer_desc));
 
 	constant_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	constant_buffer_desc.ByteWidth = 64;
+	constant_buffer_desc.ByteWidth = 128;
 	constant_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 	hr = ModelDevice->CreateBuffer(&constant_buffer_desc, NULL, &ModelConstantBuffer);
@@ -122,6 +122,11 @@ void Model::Draw(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	MODEL_CONSTANT_BUFFER MCB_Values;
 	DirectX::XMMATRIX world, scale, rotate, translate;
 
+	//setting lights
+	DirectionalLightShinesFrom = DirectX::XMVectorSet(0.0f, 1.0f, -1.0f, 0.0f);
+	DirectionalLightColour = DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f); // green
+	AmbientLightColour = DirectX::XMVectorSet(0.1f, 0.1f, 0.1f, 1.0f);
+
 	//when calcualte remember is scale x rotate x translate 
 	//(rotation may be off as ive done something new. if dosent work do each rotation manually)
 	scale = DirectX::XMMatrixScaling(ModelScale, ModelScale, ModelScale);
@@ -129,6 +134,21 @@ void Model::Draw(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	translate = DirectX::XMMatrixTranslation(ModelX, ModelY, ModelZ);
 
 	world = scale * rotate * translate;
+
+	//lighting stuff here
+	DirectX::XMMATRIX transpose;
+	DirectX::XMMATRIX inverse;
+	DirectX::XMVECTOR determinant;
+
+	transpose = DirectX::XMMatrixTranspose(world);
+	inverse = DirectX::XMMatrixInverse(&determinant, world);
+
+	MCB_Values.directional_light_colour = DirectionalLightColour;
+	MCB_Values.ambient_light_colour = AmbientLightColour;
+	MCB_Values.directional_light_vector = DirectX::XMVector3Transform(DirectionalLightShinesFrom, transpose);
+	MCB_Values.point_light_position = DirectX::XMVector3Transform(DirectionalLightShinesFrom, inverse);
+	MCB_Values.directional_light_vector = DirectX::XMVector3Normalize(MCB_Values.directional_light_vector);
+
 
 	MCB_Values.WorldViewProjection = world * (view) * (projection);
 

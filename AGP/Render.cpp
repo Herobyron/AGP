@@ -119,19 +119,19 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 		
 		if (!TheWorld->TestFloorCollision(PlayerOne->ReturnModel()))
 		{
-			PlayerOne->MoveDown(1 * 0.01);
-			TopColliding = false;
+			PlayerOne->MoveDown(1 * 0.05);
+			BottomColliding = false;
 		}
 		else
 		{
-			TopColliding = true;
+			BottomColliding = true;
 		}
 	}
 	else
 	{
 		if (!TheWorld->TestFloorCollision(PlayerOne->ReturnModel()))
 		{
-			PlayerOne->MoveDown(-1 * 0.01);
+			PlayerOne->MoveDown(-1 * 0.05);
 			BottomColliding = false;
 		}
 		else
@@ -142,7 +142,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 
 	if (theinput->ISKeyPressed(DIK_UP))
 	{
-		PlayerOne->ReturnModel()->MoveFoward(1.0 * 0.01);
+		PlayerOne->ReturnModel()->MoveFoward(1.0 * 0.1);
 		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
 			// add score
@@ -155,7 +155,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	}
 	else if (theinput->ISKeyPressed(DIK_DOWN))
 	{
-		PlayerOne->ReturnModel()->MoveFoward(-1.0 * 0.01);
+		PlayerOne->ReturnModel()->MoveFoward(-1.0 * 0.1);
 		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
 			// add score
@@ -168,7 +168,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	}
 	else if (theinput->ISKeyPressed(DIK_LEFT))
 	{
-		PlayerOne->ReturnModel()->MoveSideWays(-1.0 * 0.01);
+		PlayerOne->ReturnModel()->MoveSideWays(-1.0 * 0.1);
 		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
 			// add score
@@ -181,7 +181,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	}
 	else if (theinput->ISKeyPressed(DIK_RIGHT))
 	{
-		PlayerOne->ReturnModel()->MoveSideWays(1.0 * 0.01);
+		PlayerOne->ReturnModel()->MoveSideWays(1.0 * 0.1);
 		if (TheWorld->TestCoinCollision(PlayerOne->ReturnModel()))
 		{
 			// add score
@@ -198,12 +198,12 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	//checking if the player is colliding with floor and pushing the model up to make sure they dont fall through and can move
 	if (BottomColliding)
 	{
-		PlayerOne->MoveDown(1 * 0.1);
+		PlayerOne->MoveDown(1 * 0.01);
 		BottomColliding = false;
 	}
 	else if (TopColliding)
 	{
-		PlayerOne->MoveDown(-1 * 0.1);
+		PlayerOne->MoveDown(-1 * 0.01);
 		TopColliding = false;
 	}
 
@@ -275,7 +275,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	}
 
 	// npc actually moving
-	NPCOne->ReturnModel()->MoveFoward(1 * 0.01);
+	NPCOne->ReturnModel()->MoveFoward(1 * 0.1);
 
 	// test the collisions
 	if (NPCOne->ReturnModel()->CheckCollision(Node1))
@@ -299,15 +299,29 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 		Rotated = false;
 	}
 
+	// test npc collision on the player if so decrease player health and move npc away
+	if (NPCTwo->ReturnModel()->CheckCollision(PlayerOne->ReturnModel()))
+	{
+		PlayerOne->Damage(1);
+		NPCTwo->ReturnModel()->SetX(5);
+		NPCTwo->ReturnModel()->SetZ(10);
+	}
+	
+	
+	//npc two movement
+	NPCTwo->ReturnModel()->LookAt_XZ(PlayerOne->ReturnModel()->ReturnXPos(), PlayerOne->ReturnModel()->ReturnZPos());
+	NPCTwo->ReturnModel()->MoveFoward(-1 * 0.01);
+
 	SetUp->ReturnImmediateContext()->PSSetSamplers(0, 1, &Sampler0);
 	SetUp->ReturnImmediateContext()->PSSetShaderResources(0, 1, &Texture0);
 
 	NPCOne->ReturnModel()->Draw(view, projection);
-
+	NPCTwo->ReturnModel()->Draw(view, projection);
 	PlayerOne->ReturnModel()->Draw(view, projection);
 
 
-	SetUp->ReturnText()->AddText( "score : " + to_string(PlayerOne->GetScore()), -1, 1, 0.1);
+	SetUp->ReturnText()->AddText( "score : " + to_string(PlayerOne->GetScore()), -1, 1, 0.08);
+	SetUp->ReturnText()->AddText("health : " + to_string(PlayerOne->GetHealth()), 0.2, 1, 0.08);
 	SetUp->ReturnText()->RenderText();
 
 	//draw the vertex buffer to the back buffer
@@ -382,6 +396,10 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 
 	//creating the npc
 	NPCOne = new NPC(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/cube.obj");
+	NPCTwo = new NPC(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/cube.obj");
+
+	NPCTwo->ReturnModel()->SetZ(10);
+	NPCTwo->ReturnModel()->SetY(0.5);
 
 	//creating the player
 	PlayerOne = new Player(SetUp->ReturnDevice(), SetUp->ReturnImmediateContext(), (char*)"assets/Sphere.obj");

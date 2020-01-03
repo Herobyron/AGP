@@ -65,8 +65,11 @@ private:
 	//the world
 	World* TheWorld;
 
-	// the first NPC
+	// the first NPC (move around map)
 	NPC* NPCOne;
+
+	// the second npc (follow the player)
+	NPC* NPCTwo;
 
 	// the player
 	Player* PlayerOne;

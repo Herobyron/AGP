@@ -15,7 +15,7 @@ Entity::Entity(ID3D11Device* device, ID3D11DeviceContext* immediatecontext, char
 	TheEntityModel->SetY(1);
 	TheEntityModel->SetZ(-10);
 	TheEntityModel->SetScale(0.5);
-
+	health = 3;
 	//load the model in
 	TheEntityModel->LoadObjModel(name);
 
@@ -34,4 +34,9 @@ float Entity::GetHealth()
 Model* Entity::ReturnModel()
 {
 	return TheEntityModel;
+}
+
+void Entity::Damage(float damageamount)
+{
+	health -= damageamount;
 }

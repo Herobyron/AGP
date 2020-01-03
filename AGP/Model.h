@@ -5,6 +5,10 @@
 struct MODEL_CONSTANT_BUFFER
 {
 	DirectX::XMMATRIX WorldViewProjection;	// 64 bytes
+	DirectX::XMVECTOR directional_light_vector; // 16 bytes
+	DirectX::XMVECTOR directional_light_colour; // 16 bytes
+	DirectX::XMVECTOR ambient_light_colour; // 16 bytes
+	DirectX::XMVECTOR point_light_position; // 16 bytes
 };
 
 
@@ -52,6 +56,11 @@ private:
 
 	//try adding something to change the texture of each of the models here
 	// (do once tutorials complete)
+
+	//vectors for the models lighting 
+	DirectX::XMVECTOR DirectionalLightShinesFrom;
+	DirectX::XMVECTOR DirectionalLightColour;
+	DirectX::XMVECTOR AmbientLightColour;
 
 public:
 

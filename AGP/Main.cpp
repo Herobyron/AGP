@@ -55,31 +55,36 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		TheInput->ReadInputstates();
 		if (TheInput->ISKeyPressed(DIK_W))
 		{
-			TheRender->ReturnCamera()->Foward(1.0f * 0.01);
+			TheRender->ReturnCamera()->Foward(1.0f * 0.3);
 		}
 		else if (TheInput->ISKeyPressed(DIK_S))
 		{
-			TheRender->ReturnCamera()->Foward(-1.0f * 0.01);
+			TheRender->ReturnCamera()->Foward(-1.0f * 0.3);
 		}
 		else if (TheInput->ISKeyPressed(DIK_Q))
 		{
-			TheRender->ReturnCamera()->Up(1.0f * 0.01);
+			TheRender->ReturnCamera()->Up(1.0f * 0.03);
 		}
 		else if (TheInput->ISKeyPressed(DIK_E))
 		{
-			TheRender->ReturnCamera()->Up(-1.0f * 0.01);
+			TheRender->ReturnCamera()->Up(-1.0f * 0.03);
 		}
 		else if (TheInput->ISKeyPressed(DIK_A))
 		{
-			TheRender->ReturnCamera()->Rotate(-1.0f * 0.1);
+			TheRender->ReturnCamera()->Rotate(-1.0f * 0.3);
 		}
 		else if (TheInput->ISKeyPressed(DIK_D))
 		{
-			TheRender->ReturnCamera()->Rotate(1.0f * 0.1);
+			TheRender->ReturnCamera()->Rotate(1.0f * 0.3);
 		}
 
 	
 		TheRender->RenderFrame(TheSetUp, TheInput);
+
+		if (TheRender->ReturnPlayer()->GetScore() >= 3600 || TheRender->ReturnPlayer()->GetHealth() <= 0)
+		{
+			msg.message = WM_QUIT;
+		}
 		
 	}
 

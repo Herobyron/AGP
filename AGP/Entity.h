@@ -35,6 +35,7 @@ public:
 	// a function to return the model of the entity
 	Model* ReturnModel();
 
-
+	// decrease the health when the entity is hit(this will only apply to the Player)
+	void Damage(float damageamount);
 };
 
