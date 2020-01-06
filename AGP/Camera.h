@@ -9,16 +9,26 @@ class Camera
 {
 private:
 
+	// the cameras x,y,z position and the DX and DZ of the camera
 	float M_X, M_Y, M_Z, M_DX, M_DZ;
+
+	// the cameras current rotation
 	float M_Camera_Rotation;
+	
+	// the camersa position vector, look at vector, and up vector
 	DirectX::XMVECTOR M_Position, M_LookAt, M_Up;
 
 
 
 public:
-
+	
+	//cameras basic constructor
 	Camera();
+
+	//cameras constructor that takes its starting position and its rotation
 	Camera(float x, float y, float z, float rotation);
+	
+	// cameras destructor 
 	~Camera();
 
 	//rotate function that takes a value to tell it how much to rotate by
@@ -38,7 +48,7 @@ public:
 	float GetY();
 	float GetZ();
 
-	//
+	
 
 };
 

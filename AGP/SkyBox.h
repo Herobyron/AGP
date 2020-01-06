@@ -1,10 +1,12 @@
 #include "Model.h"
 #include <directxmath.h>
 
+//the constant buffer struct for the sky boc
 struct SkyBox_CONSTANT_BUFFER
 {
 	DirectX::XMMATRIX WorldViewProjection;	// 64 bytes
 };
+
 
 struct SKYVout
 {
@@ -29,25 +31,25 @@ private:
 	//creates a refernce of ObjFileModel
 	Model* SkyBoxObject;
 
-	// the models vertex shader
+	// the skybox vertex shader
 	ID3D11VertexShader* SkyBoxVShader;
 
-	// the models pixel shader
+	// the skybox pixel shader
 	ID3D11PixelShader* SkyBoxPShader;
 
-	//the models input layout
+	//the skybox input layout
 	ID3D11InputLayout* SkyBoxInputLayout;
 
-	// the models constant buffer
+	// the skybox constant buffer
 	ID3D11Buffer* SkyBoxConstantBuffer;
 
-	// the models x, y, z position
+	// the skybox x, y, z position
 	float SkyBoxX, SkyBoxY, SkyBoxZ;
 
-	// the models angles on the x, y and z axis
+	// the skybox angles on the x, y and z axis
 	float SkyBoxAngleX, SkyBoxAngleY, SkyBoxAngleZ;
 
-	// the models scale
+	// the skybox scale
 	float SkyBoxScale;
 
 	//member variables needed for sky box

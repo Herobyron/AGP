@@ -1,6 +1,6 @@
 #include "SkyBox.h"
 
-//the constructor
+//the constructor that takes a device and an immediate context 
 SkyBox::SkyBox(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 {
 
@@ -18,6 +18,7 @@ SkyBox::SkyBox(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 	SkyBoxObject->SetScale(1.0f);
 }
 
+// the skybox destructor
 SkyBox::~SkyBox()
 {
 	if (SkyBoxDevice) SkyBoxDevice->Release();
@@ -36,6 +37,7 @@ SkyBox::~SkyBox()
 	if (SkyBoxTexture) SkyBoxTexture->Release();
 }
 
+// skybox initialisation
 HRESULT SkyBox::SkyBoxInitialisation()
 {
 	HRESULT hr = S_OK;
@@ -103,7 +105,7 @@ HRESULT SkyBox::SkyBoxInitialisation()
 	
 	SkyBoxObject->LoadObjModel((char*)"assets/cube.obj");
 
-	//setting up the skybox stuff
+	//setting up the skybox rasterizer
 	D3D11_RASTERIZER_DESC rasterizer_desc;
 	ZeroMemory(&rasterizer_desc, sizeof(rasterizer_desc));
 
@@ -115,6 +117,7 @@ HRESULT SkyBox::SkyBoxInitialisation()
 	rasterizer_desc.CullMode = D3D11_CULL_FRONT;
 	hr = SkyBoxDevice->CreateRasterizerState(&rasterizer_desc, &RasterSkyBox);
 
+	//setting up the depth stencil
 	D3D11_DEPTH_STENCIL_DESC DSDesc;
 	ZeroMemory(&DSDesc, sizeof(DSDesc));
 	DSDesc.DepthEnable = true;
@@ -125,6 +128,7 @@ HRESULT SkyBox::SkyBoxInitialisation()
 	DSDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	hr = SkyBoxDevice->CreateDepthStencilState(&DSDesc, &DepthWriteSkyBox);
 
+	//setting up the skybox texture
 	D3DX11CreateShaderResourceViewFromFile(SkyBoxDevice, "assets/robotexture.bmp", NULL, NULL, &SkyBoxTexture, NULL);
 
 	//loading in the vertex and pixel shaders of the model
@@ -229,7 +233,7 @@ HRESULT SkyBox::SkyBoxInitialisation()
 	//unlock the buffer
 	SkyBoxImmediateContext->Unmap(SkyBoxVertexBuffer, NULL);
 
-
+	//setting up the skybox sampler
 	D3D11_SAMPLER_DESC sampler_desc;
 	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
 	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -246,27 +250,34 @@ HRESULT SkyBox::SkyBoxInitialisation()
 	return hr;
 }
 
+// a function to draw the skybox
 void SkyBox::Draw(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 {
 	SkyBox_CONSTANT_BUFFER MCB_Values;
 	DirectX::XMMATRIX world, scale, rotate, translate;
 
+	// calculating the world matrix for the constant buffer
 	scale = DirectX::XMMatrixScaling(SkyBoxScale, SkyBoxScale, SkyBoxScale);
 	rotate = DirectX::XMMatrixRotationRollPitchYaw(SkyBoxAngleX, SkyBoxAngleY, SkyBoxAngleZ);
 	translate = DirectX::XMMatrixTranslation(SkyBoxX, SkyBoxY, SkyBoxZ);
 
 	world = scale * rotate * translate;
 
+	// calculating the world view projection
 	MCB_Values.WorldViewProjection = world * (view) * (projection);
 
+	//setting up the constant buffer
 	SkyBoxImmediateContext->VSSetConstantBuffers(0, 1, &SkyBoxConstantBuffer);
 	SkyBoxImmediateContext->PSSetConstantBuffers(0, 1, &SkyBoxConstantBuffer);
 
+	// update subresource
 	SkyBoxImmediateContext->UpdateSubresource(SkyBoxConstantBuffer, 0, 0, &ConstantBufferValues, 0, 0);
 
+	//setting the rasterizer
 	SkyBoxImmediateContext->RSSetState(RasterSkyBox);
 	SkyBoxImmediateContext->OMSetDepthStencilState(DepthWriteSkyBox, 0);
 
+	//setting the texture and sampler
 	SkyBoxImmediateContext->PSSetSamplers(0, 1, &SkyBoxSampler);
 	SkyBoxImmediateContext->PSSetShaderResources(0, 1, &SkyBoxTexture);
 

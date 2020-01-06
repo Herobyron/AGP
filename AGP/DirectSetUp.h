@@ -33,19 +33,31 @@ private:
 
 public:
 
+	// the direct x set up constructor
 	DirectSetUp();
+
+	// the direct x set up destructor
 	~DirectSetUp();
 
+	// initialise the direct x components
 	HRESULT InitialseD3D(Window* window);
 
+	// returns the immediate context of the project
 	ID3D11DeviceContext* ReturnImmediateContext();
+	
+	// returns the device thats been created from the project
 	ID3D11Device* ReturnDevice();
+	
+	// returns the swap chain created from the project
 	IDXGISwapChain* ReturnSwapChain();
 
+	//returns the back buffer view created by initialise D3D
 	ID3D11RenderTargetView* ReturnBackBufferView();
 
+	//returns the Z buffer created from initialise D3D
 	ID3D11DepthStencilView* ReturnZBuffer();
 
+	// returns the text which is initialised in this class
 	Text2D* ReturnText();
 
 };

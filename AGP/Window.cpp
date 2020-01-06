@@ -3,16 +3,19 @@
 //callback
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+// basic window constructor
 Window::Window()
 {
 
 }
 
+//basic wondow destructor
 Window::~Window()
 {
 
 }
 
+// a function to start the window up
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
@@ -40,7 +43,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 }
 
-
+//function to initialise the window
 HRESULT Window::InitialiseWindow(HINSTANCE hinstance, int CmdShow)
 {
 	//a name for the app
@@ -72,12 +75,13 @@ HRESULT Window::InitialiseWindow(HINSTANCE hinstance, int CmdShow)
 
 }
 
-
+// return the HWND
 HWND Window::ReturnHWND()
 {
 	return Hwnd;
 }
 
+// function to return the HInstance
 HINSTANCE Window::ReturnHinstance()
 {
 	return HInstance;

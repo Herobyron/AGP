@@ -1,5 +1,6 @@
 #include "ParticleGenerator.h"
 
+// a constructor that initialises all of the particles to be used within the game
 ParticleGenerator::ParticleGenerator(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 {
 	ParticleDevice = device;
@@ -28,6 +29,7 @@ ParticleGenerator::ParticleGenerator(ID3D11Device* device, ID3D11DeviceContext* 
 
 }
 
+// the destructor
 ParticleGenerator::~ParticleGenerator()
 {
 	if (ParticleDevice)				ParticleDevice->Release();
@@ -42,20 +44,24 @@ ParticleGenerator::~ParticleGenerator()
 
 }
 
+// a function to calculate a random number between zero and one
 float ParticleGenerator::RandomZeroToOne()
 {
 	//return  srand(float(timeGetTime()) / 1000.0f) % 1;
 	return rand() % 2;
 }
 
+//a function to calculate a random number between negative one and one
 float ParticleGenerator::RandomNegOneToPosOne()
 {
 	return rand() % 1 + -1;
 }
 
+// // a function to create the particles
 HRESULT ParticleGenerator::CreateParticle()
 {
 	HRESULT hr = S_OK;
+	// the particles verticies
 	DirectX::XMFLOAT3 vertices[6] =
 	{
 		DirectX::XMFLOAT3(-1.0f,-1.0f, 0.0f),
@@ -66,6 +72,7 @@ HRESULT ParticleGenerator::CreateParticle()
 		DirectX::XMFLOAT3( 1.0f, 1.0f, 0.0f),
 	};
 
+	//creating the rasterizer
 	D3D11_RASTERIZER_DESC rasterizer_desc;
 	ZeroMemory(&rasterizer_desc, sizeof(rasterizer_desc));
 	rasterizer_desc.FillMode = D3D11_FILL_SOLID;
@@ -175,12 +182,13 @@ HRESULT ParticleGenerator::CreateParticle()
 
 }
 
-
+//a function to set the particle generator on and off
 void ParticleGenerator::SetEngine(bool OnOff)
 {
 	Active = OnOff;
 }
 
+// a function to draw all of the particles to the screen
 void ParticleGenerator::DrawParticle(DirectX::XMMATRIX* view, DirectX::XMMATRIX* projection, DirectX::XMFLOAT3* cameraposition)
 {
 	float TimeNow = float(timeGetTime()) / 1000.0f;
@@ -212,12 +220,12 @@ void ParticleGenerator::DrawParticle(DirectX::XMMATRIX* view, DirectX::XMMATRIX*
 				{
 					m_age = 4.0f;
 					m_untilParticle = 0.008f;
-					////////////////////////initialise the particle NOTE: all of this is adjustable for different effects////////////////////////
+					
 					(*it)->colour = DirectX::XMFLOAT4(RandomZeroToOne(), RandomZeroToOne(), RandomZeroToOne(), 1.0f);
 					(*it)->gravity = 4.5f;
 					(*it)->position = DirectX::XMFLOAT3(-10.0f, 1.0f, 3.0f);
 					(*it)->velocity = DirectX::XMFLOAT3(10.0f, 5.0f, 10.0f);
-						////////////////////////////////////////////////////////////////////////////////////////////////
+						
 						break;
 				}
 				default:
@@ -225,7 +233,7 @@ void ParticleGenerator::DrawParticle(DirectX::XMMATRIX* view, DirectX::XMMATRIX*
 					break;
 				}
 				}
-				(*it)->age -= 1.0f;//set age to 0. this is used for knowing when to delete the particle
+				(*it)->age -= 1.0f;//decrease the age everytime it ticks. this is used for knowing when to delete the particle
 	
 			//////add the particle from the front of the available list to the back of the active list and remove it
 				active.push_back(*it);
@@ -322,6 +330,8 @@ void ParticleGenerator::DrawParticle(DirectX::XMMATRIX* view, DirectX::XMMATRIX*
 
 }
 
+// a function to draw one particle
+// this was mainly used for testing when creating a particle
 void ParticleGenerator::DrawOne(Particle* one, DirectX::XMMATRIX view, DirectX::XMMATRIX projection, DirectX::XMFLOAT3 cameraposition)
 {
 	UINT stride = sizeof(DirectX::XMFLOAT3);
@@ -460,6 +470,7 @@ void ParticleGenerator::ChangeScale(float ChangeAmount)
 	ParticleScale += ChangeAmount;
 }
 
+// a function to get the particles to look a certain way
 void ParticleGenerator::LookAt_XZ(float WorldSpaceX, float WorldSpaceZ)
 {
 	float DX, DZ;
@@ -470,6 +481,7 @@ void ParticleGenerator::LookAt_XZ(float WorldSpaceX, float WorldSpaceZ)
 
 }
 
+//a function to move the particles foward
 void ParticleGenerator::MoveFoward(float distance)
 {
 	ParticleX += sin(ParticleAngleY * (DirectX::XM_PI / 180)) * distance;
@@ -477,6 +489,7 @@ void ParticleGenerator::MoveFoward(float distance)
 
 }
 
+// a function to move the particle sideways
 void ParticleGenerator::MoveSideWays(float distance)
 {
 	ParticleX += distance;

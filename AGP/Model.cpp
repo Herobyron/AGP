@@ -1,5 +1,6 @@
 #include "Model.h"
 
+//a model constructor that sets up models device and immediate context
 Model::Model(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 {
 	ModelDevice = device;
@@ -13,6 +14,7 @@ Model::Model(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 	ModelScale = 1.0f;
 }
 
+// model destructor
 Model::~Model()
 {
 	if (ModelDevice) ModelDevice->Release();
@@ -25,10 +27,12 @@ Model::~Model()
 
 }
 
+// a function that takes a char pointer as a variable and loads the object into the game
 HRESULT Model::LoadObjModel(char* FileName)
 {
 	HRESULT hr = S_OK;
 
+	//creates a new model object
 	ModelObject = new ObjFileModel(FileName, ModelDevice, ModelImmediateContext);
 	if (ModelObject->filename == "FILE NOT LOADED")
 	{
@@ -143,13 +147,14 @@ void Model::Draw(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	transpose = DirectX::XMMatrixTranspose(world);
 	inverse = DirectX::XMMatrixInverse(&determinant, world);
 
+	//setting up the model lights and stuff
 	MCB_Values.directional_light_colour = DirectionalLightColour;
 	MCB_Values.ambient_light_colour = AmbientLightColour;
 	MCB_Values.directional_light_vector = DirectX::XMVector3Transform(DirectionalLightShinesFrom, transpose);
 	MCB_Values.point_light_position = DirectX::XMVector3Transform(DirectionalLightShinesFrom, inverse);
 	MCB_Values.directional_light_vector = DirectX::XMVector3Normalize(MCB_Values.directional_light_vector);
 
-
+	// sets up the model world projection
 	MCB_Values.WorldViewProjection = world * (view) * (projection);
 
 	//set the constant buffer to be active
@@ -164,6 +169,7 @@ void Model::Draw(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	ModelImmediateContext->PSSetShader(ModelPShader, 0, 0);
 	ModelImmediateContext->IASetInputLayout(ModelInputLayout);
 
+	//draws the model
 	ModelObject->Draw();
 
 }
@@ -274,6 +280,7 @@ void Model::ChangeScale(float ChangeAmount)
 	ModelScale += ChangeAmount;
 }
 
+// a function that gets the model to look at the world space cordinates inputed in
 void Model::LookAt_XZ(float WorldSpaceX, float WorldSpaceZ)
 {
 	float DX, DZ;
@@ -284,6 +291,7 @@ void Model::LookAt_XZ(float WorldSpaceX, float WorldSpaceZ)
 
 }
 
+// a function to move the model foward  depending on the distance inputed in
 void Model::MoveFoward(float distance)
 {
 	ModelX += sin(ModelAngleY * (DirectX::XM_PI / 180)) * distance;
@@ -291,11 +299,13 @@ void Model::MoveFoward(float distance)
 
 }
 
+//changes the X coordinated depending on variable
 void Model::MoveSideWays(float distance)
 {
 	ModelX +=  distance;
 }
 
+//calculates the models centre point 
 void Model::CalculateModelCentrePoint()
 {
 	float MinX = {0};
@@ -305,7 +315,7 @@ void Model::CalculateModelCentrePoint()
 	float MinZ = {0};
 	float MaxZ = {0};
 
-
+	// gets the min and max of each coordinate
 	for (int i = 0; i < ModelObject->numverts; i++)
 	{
 		// test for min and max X
@@ -347,14 +357,17 @@ void Model::CalculateModelCentrePoint()
 			MinZ *= ModelScale;
 		}
 
+		// then using them to caluclate the sphere centre X and Y
 		BoundingSphereCentreX = ((MaxX - MinX) / 2);
 		BoundingSphereCentreY = ((MaxY - MinY) / 2);
 		BoundingSphereCentreZ = ((MaxZ - MinZ) / 2);
 
+		// timeses the distance by the scale
 		float ChangeDistX = (BoundingSphereCentreX * ModelScale);
 		float ChangeDistY = (BoundingSphereCentreY * ModelScale);
 		float ChangeDistZ = (BoundingSphereCentreZ * ModelScale);
 
+		// then minuses the change in distance to calculate the final bounding sphere centre
 		BoundingSphereCentreX -= ChangeDistX;
 		BoundingSphereCentreY -= ChangeDistY;
 		BoundingSphereCentreZ -= ChangeDistZ;

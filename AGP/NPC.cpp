@@ -24,6 +24,7 @@ void NPC::Movement()
 
 }
 
+// a function to move the npc down
 void NPC::MoveDown(float distance)
 {
 	TheEntityModel->ChangeYPos(distance);

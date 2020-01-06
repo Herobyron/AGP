@@ -2,6 +2,7 @@
 #include "objfilemodel.h"
 #include <directxmath.h>
 
+// the models constant buffer
 struct MODEL_CONSTANT_BUFFER
 {
 	DirectX::XMMATRIX WorldViewProjection;	// 64 bytes
@@ -53,9 +54,6 @@ private:
 
 	float BoungingSphereRadius;
 
-
-	//try adding something to change the texture of each of the models here
-	// (do once tutorials complete)
 
 	//vectors for the models lighting 
 	DirectX::XMVECTOR DirectionalLightShinesFrom;
@@ -134,8 +132,13 @@ public:
 	void CalculateModelCentrePoint();
 	void CalculateBoundingSphereRadius();
 
+	// a function to return the bounding shpere radius that has been calculated
 	float GetBoundingSphereRadius();
+
+	// a function to return the bounding world space position of the models colliding sphere
 	DirectX::XMVECTOR GetBoundingSphereWorldSpacePosition();
+
+	// these functions check the collision of the bounding spheres of the models
 	bool CheckCollision(Model* OtherModel);
 	bool CheckCollisionAABB(Model* OtherModel);
 

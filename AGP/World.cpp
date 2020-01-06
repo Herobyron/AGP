@@ -1,5 +1,6 @@
 #include "World.h"
 
+// world constructor
 World::World()
 {   //pushing back the floor strings
 	Layoutfloor.push_back("BBBBBBBBBBBBBB");
@@ -16,6 +17,7 @@ World::World()
 	Layoutfloor.push_back("BBBBBBBBBBBBBB");
 	Layoutfloor.push_back("BBBBBBBBBBBBBB");
 
+	// pushing back the coin strings
 	LayoutCoin.push_back("....C....C....");
 	LayoutCoin.push_back("C...C....C...C");
 	LayoutCoin.push_back("....C....C....");
@@ -29,6 +31,7 @@ World::World()
 	LayoutCoin.push_back("....C....C....");
 	LayoutCoin.push_back("C...C....C...C");
 
+	// pushes back the walls layout
 	LayoutWalls.push_back("WWWWWWWWWWWWWWWW");
 	LayoutWalls.push_back("W..............W");
 	LayoutWalls.push_back("W..............W");
@@ -48,6 +51,7 @@ World::World()
 	FloorScale = 1.0f;
 }
 
+// the world destructor
 World::~World()
 {
 	WorldBlocks.clear();
@@ -56,40 +60,46 @@ World::~World()
 	LayoutCoin.clear();
 }
 
+// gets the floors hieght
 float World::GetFloorHieght()
 {
 	return Layoutfloor.size();
 }
 
+// gets the floors width
 float World::GetFloorWidth()
 {
 	return Layoutfloor[0].length();
 }
 
+// gets the coins hieght
 float World::GetCoinHieght()
 {
 	return LayoutCoin.size();
 }
 
+// get coins width
 float World::GetCoinWidth()
 {
 	return LayoutCoin[0].length();
 }
 
+//gets the wall hieght
 float World::GetWallHieght()
 {
 	return LayoutWalls.size();
 }
 
+//get wall width
 float World::GetWallWidth()
 {
 	return LayoutWalls[0].length();
 }
 
-
+// initialsies the floor with the device and the immediate context
 void World::InitialiseFloor(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 {
-
+	//uses for loops to iterate throught the vector of values
 	for (int h = 0; h < GetFloorHieght(); h++)
 	{
 		for (int r = 0; r < GetFloorWidth(); r++)
@@ -107,6 +117,7 @@ void World::InitialiseFloor(ID3D11Device* device, ID3D11DeviceContext* immediate
 					
 
 					//FloorBlock->SetScale(FloorScale);
+					//sets up the floor and pushes it back to the vector
 					FloorBlock->SetX((r * 2) - 12);
 					FloorBlock->SetY(-2);
 					FloorBlock->SetZ((h * 2) - 10);
@@ -125,9 +136,10 @@ void World::InitialiseFloor(ID3D11Device* device, ID3D11DeviceContext* immediate
 	}
 }
 
-
+// intiaislise the walls with the device and immediate context
 void World::InitialiseWalls(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 {
+	//uses for loops to iterate throught the vector of values
 	for (int h = 0; h < GetWallHieght(); h++)
 	{
 		for (int r = 0; r < GetWallWidth(); r++)
@@ -145,6 +157,7 @@ void World::InitialiseWalls(ID3D11Device* device, ID3D11DeviceContext* immediate
 
 
 				//FloorBlock->SetScale(FloorScale);
+				//sets up the wall an pushes it back into the vector
 				WallBlock->SetX((r * 2) - 14);
 				WallBlock->SetY(0);
 				WallBlock->SetZ((h * 2) - 12);
@@ -165,8 +178,10 @@ void World::InitialiseWalls(ID3D11Device* device, ID3D11DeviceContext* immediate
 	}
 }
 
+//initialises the coins using the device and immediate context 
 void World::InitialiseCoins(ID3D11Device* device, ID3D11DeviceContext* immediatecontext)
 {
+	//uses for loops to iterate throught the vector of values
 	for (int h = 0; h < GetCoinHieght(); h++)
 	{
 		for (int r = 0; r < GetCoinWidth(); r++)
@@ -184,6 +199,7 @@ void World::InitialiseCoins(ID3D11Device* device, ID3D11DeviceContext* immediate
 
 
 					//FloorBlock->SetScale(FloorScale);
+					//sets up the coin and pushes it back into the vector
 					CoinBlock->SetX((r * 2) - 12);
 					CoinBlock->SetY(0);
 					CoinBlock->SetZ((h * 2) - 10);
@@ -204,6 +220,7 @@ void World::InitialiseCoins(ID3D11Device* device, ID3D11DeviceContext* immediate
 	}
 }
 
+// function to draw all the floors in the vector
 void World::DrawFloor(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 {
 	for (int i = 0; i < WorldBlocks.size(); i++)
@@ -213,6 +230,7 @@ void World::DrawFloor(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	}
 }
 
+// function to draw all the coins in the vector
 void World::DrawCoin(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 {
 	for (int i = 0; i < Coins.size(); i++)
@@ -221,6 +239,7 @@ void World::DrawCoin(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	}
 }
 
+// draws the walls in the vector
 void World::DrawWalls(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 {
 	for (int i = 0; i < WorldWalls.size(); i++)
@@ -229,6 +248,7 @@ void World::DrawWalls(DirectX::XMMATRIX view, DirectX::XMMATRIX projection)
 	}
 }
 
+//tests all the colliisnos of the floors in the vector
 bool World::TestFloorCollision(Model* OtherModel)
 {
 	// testing for collision with all blocks stored in the world vector
@@ -246,6 +266,7 @@ bool World::TestFloorCollision(Model* OtherModel)
 
 }
 
+//tests all the coins collsions within the vector
 bool World::TestCoinCollision(Model* OtherModel)
 {
 	// testing for collision with all blocks stored in the world vector
@@ -265,6 +286,7 @@ bool World::TestCoinCollision(Model* OtherModel)
 
 }
 
+// tests the wall collsions of all of them in the vector
 bool World::TestWallCollision(Model* OtherModel)
 {
 	// testing for collision with all blocks stored in the world vector

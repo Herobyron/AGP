@@ -6,9 +6,10 @@
 #include <directxmath.h>
 #include <list>
 #include <windows.h>
-
+// this is to supress one of the librarys so that their would be no infinte loops
 #pragma comment( lib, "winmm.lib")
 
+// particles constant buffer
 struct PARTICLE_CONSTANT_BUFFER
 {
 	DirectX::XMMATRIX WorldViewProjection;	// 64 bytes
@@ -16,6 +17,7 @@ struct PARTICLE_CONSTANT_BUFFER
 
 };
 
+// a structure for a basic particle
 struct Particle
 {
 	float gravity;
@@ -25,6 +27,7 @@ struct Particle
 	float age;
 };
 
+// an enum for the type of particle
 enum type {RAINBOW_FOUNTAIN};
 
 class ParticleGenerator
@@ -60,16 +63,18 @@ private:
 		// the particles scale
 		float ParticleScale;
 
-		//other stuff
+		//the rasterizer state for the particles
 		ID3D11RasterizerState* RasterSolid = 0;
 		ID3D11RasterizerState* RasterParticle = 0;
 		ID3D11DepthStencilState* DepthWriteSolid = 0;
 		ID3D11DepthStencilState* DepthWriteParticle = 0;
 
+		// the sampler and texture for the particle
 		ID3D11SamplerState*			ParticleSampler;
 		ID3D11ShaderResourceView*	ParticleTexture;
 		ID3D11Buffer*				ParticleVertexBuffer;
 
+		// the constant buffer for the particle
 		PARTICLE_CONSTANT_BUFFER ConstantBufferValues;
 
 
@@ -162,6 +167,7 @@ public:
 		//a function to change the particle scale
 		void ChangeScale(float ChangeAmount);
 
+		// a function to turn the particles on and off
 		void SetEngine(bool OnOff);
 
 };

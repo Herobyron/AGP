@@ -1,6 +1,6 @@
 #include "Render.h"
 
-//
+//the base render class
 Render::Render()
 {
 	//creating the camera
@@ -14,7 +14,7 @@ Render::Render()
 }
 
 
-//
+//a render destructor
 Render::~Render()
 {
 	if (VertexBuffer) VertexBuffer->Release();
@@ -118,6 +118,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	//stuff for the npc and its movement
 	//this should test to see if npc one is colliding with anything its it isnt then it should move downwards
 	
+	// collision detecting depending on where the player is moveing
 	if (theinput->ISKeyPressed(DIK_SPACE))
 	{
 		
@@ -323,7 +324,7 @@ void Render::RenderFrame(DirectSetUp* SetUp, Input* theinput)
 	NPCTwo->ReturnModel()->Draw(view, projection);
 	PlayerOne->ReturnModel()->Draw(view, projection);
 
-
+	// rendering text to the screen
 	SetUp->ReturnText()->AddText( "score : " + to_string(PlayerOne->GetScore()), -1, 1, 0.08);
 	SetUp->ReturnText()->AddText("health : " + to_string(PlayerOne->GetHealth()), 0.2, 1, 0.08);
 	SetUp->ReturnText()->RenderText();
@@ -591,11 +592,13 @@ HRESULT Render::IntialiseGraphics(DirectSetUp* SetUp)
 
 }
 
+// returns the camera pointer
 Camera* Render::ReturnCamera()
 {
 	return TheCamera;
 }
 
+// returns the player 
 Player* Render::ReturnPlayer()
 {
 	return PlayerOne;

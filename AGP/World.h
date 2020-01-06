@@ -50,15 +50,19 @@ public:
 	// a function to go through the wall vector and draw
 	void DrawWalls(DirectX::XMMATRIX view, DirectX::XMMATRIX projection);
 
+	//functions to get the hieght and width of the floor vector
 	float GetFloorHieght();
 	float GetFloorWidth();
 
+	// functions to get the hieght and width of the coin vector
 	float GetCoinHieght();
 	float GetCoinWidth();
 
+	// functions to get the hieght and width of the wall vector
 	float GetWallHieght();
 	float GetWallWidth();
 
+	// a function to test all the collisions in the specified vector
 	bool TestFloorCollision(Model* OtherModel);
 	bool TestCoinCollision(Model* OtherModel);
 	bool TestWallCollision(Model* OtherModel);

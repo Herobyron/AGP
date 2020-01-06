@@ -25,8 +25,13 @@ protected:
 
 public:
 
+	// the entitys basic constructor
 	Entity();
+
+	// the entitys second constructor which takes a device, immediate context and name to initialsise the model for the entity
 	Entity(ID3D11Device* device, ID3D11DeviceContext* immediatecontext, char* name);
+
+	// the entitys basic destructor
 	~Entity();
 
 	// a function to get the entitys health

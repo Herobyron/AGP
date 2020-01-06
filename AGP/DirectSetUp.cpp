@@ -1,9 +1,11 @@
 #include "DirectSetUp.h"
+// the direct x base constructor
 DirectSetUp::DirectSetUp()
 {
 
 }
 
+//direct x destructor
 DirectSetUp::~DirectSetUp()
 {
 	if (Device) Device->Release();
@@ -14,11 +16,12 @@ DirectSetUp::~DirectSetUp()
 }
 
 
-
+// the direct x initialise function
 HRESULT DirectSetUp::InitialseD3D(Window* window)
 {
 	HRESULT hr = S_OK;
 
+	//creates the rectanle 
 	RECT rc;
 	GetClientRect(window->ReturnHWND(), &rc);
 	UINT width = rc.right - rc.left;
@@ -26,7 +29,7 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 
 	UINT CreateDeviceFlags = 0;
 
-
+	//sets the driver types to use
 	D3D_DRIVER_TYPE driverTypes[] =
 	{
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -36,6 +39,7 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 
 	UINT numDriverTypes = ARRAYSIZE(driverTypes);
 
+	//sets the feature levels to use
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_0,
@@ -45,6 +49,7 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 
 	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
+	//setting up the swap chain
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.BufferCount = 1;
@@ -59,6 +64,7 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 	sd.SampleDesc.Quality = 0;
 	sd.Windowed = true;
 
+	//creating the swap chain
 	 for(UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
 	 {
 		 DriverType = driverTypes[driverTypeIndex];
@@ -69,6 +75,7 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 	 
 	 }
 
+	 //if failed end
 	 if (FAILED(hr))
 		 return hr;
 
@@ -137,32 +144,37 @@ HRESULT DirectSetUp::InitialseD3D(Window* window)
 
 }
 
-
+// a function to return the device
 ID3D11Device* DirectSetUp::ReturnDevice()
 {
 	return Device;
 }
 
+//returns the immediatecontext
 ID3D11DeviceContext* DirectSetUp::ReturnImmediateContext()
 {
 	return ImmediateContext;
 }
 
+//returns the swap chain
 IDXGISwapChain* DirectSetUp::ReturnSwapChain()
 {
 	return SwapChain;
 }
 
+// returns the back buffer view
 ID3D11RenderTargetView* DirectSetUp::ReturnBackBufferView()
 {
 	return BackBufferRtView;
 }
 
+//returns the z buffer
 ID3D11DepthStencilView* DirectSetUp::ReturnZBuffer()
 {
 	return ZBuffer;
 }
 
+//returns the text
 Text2D* DirectSetUp::ReturnText()
 {
 	return The2DText;

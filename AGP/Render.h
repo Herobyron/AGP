@@ -39,18 +39,27 @@ class Render
 {
 private:
 
+	// the renderers vertex buffer
 	ID3D11Buffer* VertexBuffer;
+	
+	// the pixel and vertex shader used within the renderer
 	ID3D11VertexShader* VertexShader;
 	ID3D11PixelShader* PixelShader;
+	
+	// the input layout of the renderer
 	ID3D11InputLayout* InputLayout;
 
+	// refernce to renderers constant buffer
 	ID3D11Buffer* ConstantBuffer0;
 
+	// sampler and texture of the renderer
 	ID3D11SamplerState* Sampler0;
 	ID3D11ShaderResourceView* Texture0;
 
+	// a pointer to the camera class
 	Camera* TheCamera;
 	
+
 	//lighting vectors
 	DirectX::XMVECTOR Directional_Light_Shines_From;
 	DirectX::XMVECTOR Directional_Light_Colour;
@@ -94,22 +103,30 @@ private:
 	bool BottomCollidingNPC	= false;
 	bool TopCollidingNPC	= false;
 
+	// a bool to see if its rotated
 	bool Rotated = false;
 
+	// the node that the first NPC is using
 	Node currentnode = N1;
 
 public:
 
+	// the besic constructor of the renderer
 	Render();
+
+	// the basic destructor of the renderer
 	~Render();
 
-
+	//a function that takes a pointer to the direct set up class. and initialises graphics
 	HRESULT IntialiseGraphics(DirectSetUp* SetUp);
 	
+	// a function that renders everything in the scene
 	void RenderFrame(DirectSetUp* SetUp, Input* theinput);
 	
+	// returns a pointer to the camera
 	Camera* ReturnCamera();
 
+	// returns a pointer to the player
 	Player* ReturnPlayer();
 };
 
